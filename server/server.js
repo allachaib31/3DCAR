@@ -1,5 +1,5 @@
 require("custom-env").env();
-const  express = require('express');  // Import both the server and the app instance
+const express = require('express');  // Import both the server and the app instance
 const app = express();
 const connectDB = require('./config/db');
 const morgan = require("morgan");
@@ -56,7 +56,11 @@ conn.once('open', () => {
         .use(authAdminRoute)
         .use(manageAdminRoute)
         .use(manageUserRoute)
-        .use(authClientRoute)
+        .use(authClientRoute);
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    });
 
     // Start the combined HTTP + WebSocket server
     app.listen(PORT, () => {

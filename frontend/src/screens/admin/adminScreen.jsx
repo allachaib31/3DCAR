@@ -49,7 +49,7 @@ function AdminScreen() {
                 <li>
                   <Link to="/users">Users</Link>
                 </li>
-                <li><a href='/admin/carViewer' target='_blank'>Car showroom</a></li>
+                <li><a href='/carViewer'>Car showroom</a></li>
               </ul>
             </div>
             <a className="btn btn-ghost text-[3rem]">cars3D</a>
@@ -60,7 +60,7 @@ function AdminScreen() {
               <li>
                 <Link to="/users">Users</Link>
               </li>
-              <li><a href='/admin/carViewer' target='_blank'>Car showroom</a></li>
+              <li><Link to='/carViewer'>Car showroom</Link></li>
             </ul>
           </div>
           <div className="navbar-end">

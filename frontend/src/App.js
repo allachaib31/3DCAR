@@ -21,8 +21,8 @@ function App() {
               <Route path='/' element={<AdminSection />}/>
               <Route path='/users' element={<UserSection />}/>
             </Route>
-            <Route path='/admin/carViewer' element={<CarViewAdmin />}>
-              <Route path='/admin/carViewer' element={<CarViewer />}/>
+            <Route path='/carViewer' element={<CarViewAdmin />}>
+              <Route path='/carViewer/' element={<CarViewer />}/>
             </Route>
             <Route path='/client' element={<CarViewClient />}>
               <Route path='/client/' element={<CarViewer />}/>

@@ -9,6 +9,7 @@ import Stats from 'three/addons/libs/stats.module.js';
 
 const CarViewer = () => {
     const [car, setCar] = useState("untitled.glb");
+    const [lookAtPointArr, setLookAtPointArr] = useState([0, 1.2, 0])
     useEffect(() => {
         let camera, scene, renderer, stats, controls;
         let selectedMesh = null;
@@ -19,7 +20,7 @@ const CarViewer = () => {
         let isDriverView = false;
         const driverPosition = new THREE.Vector3(0.3, 1.0, 0.3);
         const externalPosition = new THREE.Vector3(4.25, 1.4, -4.5);
-        const lookAtPoint = new THREE.Vector3(0, 1.2, 0.7);
+        const lookAtPoint = new THREE.Vector3(...lookAtPointArr);
         function init() {
             const container = document.getElementById('container');
             container.innerHTML = '';
@@ -57,23 +58,6 @@ const CarViewer = () => {
             grid.material.transparent = true;
             scene.add(grid);
 
-            const backplateMaterial = new THREE.MeshPhysicalMaterial({ color: 0xff0000, metalness: 1.0, roughness: 0.5, clearcoat: 1.0, clearcoatRoughness: 0.03 });
-            const bodyMaterial = new THREE.MeshPhysicalMaterial({ color: 0xff0000, metalness: 1.0, roughness: 0.5, clearcoat: 1.0, clearcoatRoughness: 0.03 });
-            const detailsMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.5 });
-            const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x696969, metalness: 1.0, roughness: 0.5 });
-            const glassMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
-            const windowMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
-            const secondeWindowsMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
-            const sideWindowsMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
-            const interiorMiddleMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.5 });
-            const internalMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.5 });
-            const Internal001Material = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.5 });
-            const leashMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.5 });
-            const seatsMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.5 });
-            const seats001Material = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.5 });
-            const frontLightMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
-            const rearLightsMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
-
             const dracoLoader = new DRACOLoader();
             dracoLoader.setDecoderPath('/jsm/libs/draco/gltf/');
 
@@ -92,7 +76,7 @@ const CarViewer = () => {
                                 child.material = obj[child.name.toString()];
                                 child.userData.clickable = true;
                             }else{
-                                obj[child.name.toString()] = new THREE.MeshPhysicalMaterial({ color: 0x000000, metalness: 1.0, roughness: 0.5, clearcoat: 1.0, clearcoatRoughness: 0.03 });
+                                obj[child.name.toString()] = new THREE.MeshPhysicalMaterial({ color: 0x000000, metalness: 0, roughness: 1, clearcoat: 1.0, clearcoatRoughness: 0.03 });
                                 child.material = obj[child.name.toString()];
                                 child.userData.clickable = true;
                             }
@@ -195,7 +179,16 @@ const CarViewer = () => {
         <div id='body'>
             <input type="color" id="color-picker" />
             <button id="driver-view-btn">Driver's View</button>
-            <select id="driver-view-btn2" onChange={(event) => setCar(event.target.value)}>
+            <select id="driver-view-btn2" onChange={(event) =>{
+                    if(event.target.value == "untitled.glb") {
+                        setLookAtPointArr([0, 1.2, 0])
+                    }else if (event.target.value == "sport.glb"){
+                        setLookAtPointArr([0, 1, 0])
+                    } else {
+                        setLookAtPointArr([0.4, 1.7, -0.5])
+                    }
+                    setCar(event.target.value)
+                }}>
                 <option value="untitled.glb">Cylinder car</option>
                 <option value="sport.glb">Sports car</option>
                 <option value="new4x4.glb">Quad car</option>

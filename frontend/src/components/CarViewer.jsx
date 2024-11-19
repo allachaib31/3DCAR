@@ -8,6 +8,7 @@ import Stats from 'three/addons/libs/stats.module.js';
 //import "../styles/CarViewer.css"
 
 const CarViewer = () => {
+    const [car, setCar] = useState("untitled.glb");
     useEffect(() => {
         let camera, scene, renderer, stats, controls;
         let selectedMesh = null;
@@ -21,7 +22,7 @@ const CarViewer = () => {
         const lookAtPoint = new THREE.Vector3(0, 1.2, 0.7);
         function init() {
             const container = document.getElementById('container');
-
+            container.innerHTML = '';
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -79,58 +80,22 @@ const CarViewer = () => {
             const loader = new GLTFLoader();
             loader.setDRACOLoader(dracoLoader);
 
-            loader.load('/models/gltf/untitled.glb', (gltf) => {
+            loader.load(`/models/gltf/${car}`, (gltf) => {
                 const carModel = gltf.scene;
+                const glassName = ["Plane_013","Plane_014","Plane_042","Plane_024","Glass","Glass_Back_&_Front","Seconde_Windows", "windows_", "windows__003", "windows__004", "Glass_Back", "windows__005", "windows__002", "windows__001", "Glass_Front","Side_Windows", "front_lights", "front_lights_001", "carpaint_bumper_r_170", "carpaint_bumper_r_163", "carpaint_bumper_r_164", "carpaint_bumper_r_171", "carpaint_bumper_r_172", "carpaint_bumper_r_165" , "carpaint_bumper_r_166", "carpaint_bumper_r_173" ,"rear_lights_001","Backlight", "Circle_007"];
+                const obj = {};
                 carModel.traverse((child) => {
                     if (child.isMesh) {
-                        if (child.name.includes('Body')) {
-                            child.material = bodyMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('backplate')) {
-                            child.material = backplateMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('Glass')) {
-                            child.material = glassMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('windows_')) {
-                            child.material = windowMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('Seconde_Windows')) {
-                            child.material = secondeWindowsMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('Side_Windows')) {
-                            child.material = sideWindowsMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('Interior_Middle')) {
-                            child.material = interiorMiddleMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('Internal')) {
-                            child.material = internalMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('Internal_001')) {
-                            child.material = Internal001Material;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('leash')) {
-                            child.material = leashMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('seats')) {
-                            child.material = seatsMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('seats_001')) {
-                            child.material = seats001Material;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('Wheel') || child.name.includes('Wheel_002') || child.name.includes('Wheel_003') || child.name.includes('Wheel_001')) {
-                            child.material = wheelMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('front_lights')) {
-                            child.material = frontLightMaterial;
-                            child.userData.clickable = true;
-                        } else if (child.name.includes('rear_lights_001')) {
-                            child.material = rearLightsMaterial;
-                            child.userData.clickable = true;
-                        } else {
-                            child.material = detailsMaterial;
-                            child.userData.clickable = true;
+                        for (let i = 0; i < child.name.length; i++) {
+                            if(glassName.indexOf(child.name.toString()) > -1){
+                                obj[child.name.toString()] = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
+                                child.material = obj[child.name.toString()];
+                                child.userData.clickable = true;
+                            }else{
+                                obj[child.name.toString()] = new THREE.MeshPhysicalMaterial({ color: 0x000000, metalness: 1.0, roughness: 0.5, clearcoat: 1.0, clearcoatRoughness: 0.03 });
+                                child.material = obj[child.name.toString()];
+                                child.userData.clickable = true;
+                            }
                         }
                     }
                 });
@@ -225,11 +190,16 @@ const CarViewer = () => {
         }
 
         init();
-    }, [])
+    }, [car])
     return (
         <div id='body'>
             <input type="color" id="color-picker" />
             <button id="driver-view-btn">Driver's View</button>
+            <select id="driver-view-btn2" onChange={(event) => setCar(event.target.value)}>
+                <option value="untitled.glb">Cylinder car</option>
+                <option value="sport.glb">Sports car</option>
+                <option value="new4x4.glb">Quad car</option>
+            </select>
             <div id="container"></div>
         </div>
     );

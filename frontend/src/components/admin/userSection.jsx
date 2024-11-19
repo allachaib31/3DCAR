@@ -5,35 +5,19 @@ import { getUsersRoute } from '../../utils/apiRoutes';
 import LoadingScreen from '../loadingScreen';
 import Alert from '../alert';
 import AddUser from './modal/addUser';
+import DeleteUser from './modal/deleteUser';
+import RenewSubscription from './modal/renewSubscription';
 
 function UserSection() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState(false);
+  const [deleteUser, setDeleteUser] = useState(false);
+  const [index, setIndex] = useState(false);
   const [alert, setAlert] = useState({
     display: false,
   });
 
-
-  /*const handleAction = (id, admin, index) => {
-      setUpdateAdmin({
-          id: admin._id,
-          name: admin.name,
-          username: admin.username,
-          email: admin.email,
-      });
-      setIndexAdmin(index);
-      setUpdatePassword({
-          id: admin._id,
-          currentPassword: "",
-          newPassword: ""
-      });
-      setStopAccount({
-          id: admin._id,
-          block: !admin.isBlocked
-      });
-      document.getElementById(id).showModal();
-  }*/
   useEffect(() => {
     setLoading(true);
     setAlert({
@@ -91,8 +75,14 @@ function UserSection() {
                       <td>{user.username}</td>
                       <td>{user.email}</td>
                       <td>{user.subscriptionExpiryDate}</td>
-                      <td><button className='btn btn-success'>Renew subscription</button></td>
-                      <td><button className='btn btn-error'>Delete user</button></td>
+                      <td><button className='btn btn-success' onClick={() => {
+                        document.getElementById('RenewSubscription').showModal();
+                      }}>Renew subscription</button></td>
+                      <td><button className='btn btn-error' onClick={() => {
+                        setDeleteUser(user);
+                        setIndex(index);
+                        document.getElementById('deleteUser').showModal();
+                      }}>Delete</button></td>
                     </tr>
                   )
                 })
@@ -103,7 +93,8 @@ function UserSection() {
         </div>
       } />
       <AddUser setAlert={setAlert} setUsers={setUsers} />
-
+      <DeleteUser setAlert={setAlert} deleteUser={deleteUser} setUsers={setUsers} index={index} />
+      <RenewSubscription />
     </div>
   )
 }

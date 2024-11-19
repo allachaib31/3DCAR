@@ -5,11 +5,14 @@ import { getAdminsRoute } from '../../utils/apiRoutes';
 import LoadingScreen from '../loadingScreen';
 import AddAdmin from './modal/addAdmin';
 import Alert from '../alert';
+import DeleteAdmin from './modal/deleteAdmin';
 
 function AdminSection() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [admins, setAdmins] = useState(false);
+    const [deleteAdmin, setDeleteAdmin] = useState(false);
+    const [index, setIndex] = useState(false);
     const [alert, setAlert] = useState({
         display: false,
     });
@@ -75,6 +78,7 @@ function AdminSection() {
                                 <th>Name</th>
                                 <th>Username</th>
                                 <th>Email</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody className='text-[1rem]'>
@@ -87,6 +91,11 @@ function AdminSection() {
                                             <td>{admin.name}</td>
                                             <td>{admin.username}</td>
                                             <td>{admin.email}</td>
+                                            <td><button className='btn btn-error' onClick={() => {
+                                                setDeleteAdmin(admin);
+                                                setIndex(index);
+                                                document.getElementById('deleteAdmin').showModal();
+                                            }}>Delete</button></td>
                                         </tr>
                                     )
                                 })
@@ -97,7 +106,7 @@ function AdminSection() {
                 </div>
             } />
             <AddAdmin setAlert={setAlert} setAdmins={setAdmins}/>
-
+            <DeleteAdmin setAlert={setAlert} deleteAdmin={deleteAdmin} setAdmins={setAdmins} index={index}/>
         </div>
     )
 }

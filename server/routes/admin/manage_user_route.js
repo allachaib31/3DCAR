@@ -12,7 +12,7 @@ Router.post("/api/v1.0/admin/addUser", verifyToken, upload.single("image"),addUs
 
 
 //DELETE METHODS
-Router.delete("/api/v1.0/admin/deleteUser", verifyToken,deleteUser);
+Router.delete("/api/v1.0/admin/deleteUser/:id", verifyToken,deleteUser);
 
 //GET METHODS
 Router.get("/api/v1.0/admin/getUsers", verifyToken,getUsers);

@@ -69,6 +69,7 @@ exports.deleteAdmin = async (req, res) => {
 
         res.status(httpStatus.OK).send({ msg: "تم حذف المسؤول بنجاح" });
     } catch (err) {
+        console.log(err)
         res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في حذف المسؤول" });
     }
 };

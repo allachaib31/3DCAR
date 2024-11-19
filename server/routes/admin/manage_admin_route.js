@@ -8,7 +8,7 @@ Router.post("/api/v1.0/admin/addAdmin", verifyToken ,addAdmin);
 
 
 //DELETE METHODS
-Router.delete("/api/v1.0/admin/deleteAdmin", verifyToken,deleteAdmin);
+Router.delete("/api/v1.0/admin/deleteAdmin/:id", verifyToken,deleteAdmin);
 
 //GET METHODS
 Router.get("/api/v1.0/admin/getAdmins", verifyToken,getAdmins);

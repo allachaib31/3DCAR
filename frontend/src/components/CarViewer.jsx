@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import Stats from 'three/addons/libs/stats.module.js';
-//import "../styles/CarViewer.css"
 
 const CarViewer = () => {
     const [car, setCar] = useState("untitled.glb");
-    const [lookAtPointArr, setLookAtPointArr] = useState([0, 1.2, 0])
+    const [lookAtPointArr, setLookAtPointArr] = useState([0, 1.2, 0]);
+    const containerRef = useRef(null);
+
     useEffect(() => {
         let camera, scene, renderer, stats, controls;
         let selectedMesh = null;
@@ -21,9 +22,13 @@ const CarViewer = () => {
         const driverPosition = new THREE.Vector3(0.3, 1.0, 0.3);
         const externalPosition = new THREE.Vector3(4.25, 1.4, -4.5);
         const lookAtPoint = new THREE.Vector3(...lookAtPointArr);
+
+        // Initialize the scene
         function init() {
-            const container = document.getElementById('container');
-            container.innerHTML = '';
+            const container = containerRef.current;
+            container.innerHTML = ''; // Clear previous renderer content
+
+            // Setup renderer
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -32,63 +37,101 @@ const CarViewer = () => {
             renderer.toneMappingExposure = 0.85;
             container.appendChild(renderer.domElement);
 
-            window.addEventListener('resize', onWindowResize);
-
-            stats = new Stats();
-            container.appendChild(stats.dom);
-
+            // Setup camera
             camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
             camera.position.copy(externalPosition);
 
-            controls = new OrbitControls(camera, container);
+            // Setup controls
+            controls = new OrbitControls(camera, renderer.domElement);
             controls.maxDistance = 9;
             controls.maxPolarAngle = THREE.MathUtils.degToRad(90);
             controls.target.set(0, 0.5, 0);
             controls.update();
 
+            // Setup scene
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x333333);
-            scene.environment = new RGBELoader().load('/textures/equirectangular/venice_sunset_1k.hdr');
-            scene.environment.mapping = THREE.EquirectangularReflectionMapping;
+            new RGBELoader().load('/textures/equirectangular/venice_sunset_1k.hdr', (texture) => {
+                scene.environment = texture;
+                scene.environment.mapping = THREE.EquirectangularReflectionMapping;
+            });
             scene.fog = new THREE.Fog(0x333333, 10, 15);
 
+            // Setup grid helper
             const grid = new THREE.GridHelper(20, 40, 0xffffff, 0xffffff);
             grid.material.opacity = 0.2;
             grid.material.depthWrite = false;
             grid.material.transparent = true;
             scene.add(grid);
 
+            // Setup stats
+            stats = new Stats();
+            container.appendChild(stats.dom);
+
+            // Load car model
             const dracoLoader = new DRACOLoader();
             dracoLoader.setDecoderPath('/jsm/libs/draco/gltf/');
-
             const loader = new GLTFLoader();
             loader.setDRACOLoader(dracoLoader);
 
             loader.load(`/models/gltf/${car}`, (gltf) => {
                 const carModel = gltf.scene;
-                const glassName = ["Plane_013","Plane_014","Plane_042","Plane_024","Glass","Glass_Back_&_Front","Seconde_Windows", "windows_", "windows__003", "windows__004", "Glass_Back", "windows__005", "windows__002", "windows__001", "Glass_Front","Side_Windows", "front_lights", "front_lights_001", "carpaint_bumper_r_170", "carpaint_bumper_r_163", "carpaint_bumper_r_164", "carpaint_bumper_r_171", "carpaint_bumper_r_172", "carpaint_bumper_r_165" , "carpaint_bumper_r_166", "carpaint_bumper_r_173" ,"rear_lights_001","Backlight", "Circle_007"];
-                const obj = {};
+                const glassNames = new Set([
+                    "Plane_013", "Plane_014", "Plane_042", "Plane_024", "Glass", "Glass_Back_&_Front",
+                    "Seconde_Windows", "windows_", "windows__003", "windows__004", "Glass_Back",
+                    "windows__005", "windows__002", "windows__001", "Glass_Front", "Side_Windows",
+                    "front_lights", "front_lights_001", "carpaint_bumper_r_170", "carpaint_bumper_r_163",
+                    "carpaint_bumper_r_164", "carpaint_bumper_r_171", "carpaint_bumper_r_172",
+                    "carpaint_bumper_r_165", "carpaint_bumper_r_166", "carpaint_bumper_r_173",
+                    "rear_lights_001", "Backlight", "Circle_007"
+                ]);
+
                 carModel.traverse((child) => {
                     if (child.isMesh) {
-                        for (let i = 0; i < child.name.length; i++) {
-                            if(glassName.indexOf(child.name.toString()) > -1){
-                                obj[child.name.toString()] = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
-                                child.material = obj[child.name.toString()];
-                                child.userData.clickable = true;
-                            }else{
-                                obj[child.name.toString()] = new THREE.MeshPhysicalMaterial({ color: 0x000000, metalness: 0, roughness: 1, clearcoat: 1.0, clearcoatRoughness: 0.03 });
-                                child.material = obj[child.name.toString()];
-                                child.userData.clickable = true;
-                            }
-                        }
+                        const material = glassNames.has(child.name)
+                            ? new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 })
+                            : new THREE.MeshPhysicalMaterial({
+                                color: 0x1b1b1b,
+                                metalness: 0.1,
+                                roughness: 0.5,
+                                clearcoat: 0.9,
+                                clearcoatRoughness: 0.2,
+                                sheen: 0.5,
+                                sheenColor: new THREE.Color(0x444444)
+                            });
+                        child.material = material;
+                        child.userData.clickable = true;
                     }
                 });
+
                 scene.add(carModel);
             });
 
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
             window.addEventListener('click', onClick);
             colorPicker.addEventListener('input', onColorChange);
             driverViewBtn.addEventListener('click', toggleDriverView);
+        }
+
+        function cleanup() {
+            // Dispose of all objects in the scene
+            scene.traverse((object) => {
+                if (object.isMesh) {
+                    object.geometry.dispose();
+                    if (Array.isArray(object.material)) {
+                        object.material.forEach((mat) => mat.dispose());
+                    } else {
+                        object.material.dispose();
+                    }
+                }
+            });
+
+            renderer.dispose();
+            window.removeEventListener('resize', onWindowResize);
+            window.removeEventListener('click', onClick);
+            colorPicker.removeEventListener('input', onColorChange);
+            driverViewBtn.removeEventListener('click', toggleDriverView);
         }
 
         function onWindowResize() {
@@ -99,14 +142,14 @@ const CarViewer = () => {
 
         function toggleDriverView() {
             if (isDriverView) {
-                animateCamera(externalPosition, new THREE.Vector3(0, 0.5, 0), 'Driver\'s View');
+                animateCamera(externalPosition, new THREE.Vector3(0, 0.5, 0), "Driver's View");
                 controls.maxDistance = 9;
                 controls.enablePan = true;
                 controls.enableZoom = true;
                 controls.minDistance = 0;
                 isDriverView = false;
             } else {
-                animateCamera(driverPosition, lookAtPoint, 'Exit Driver\'s View');
+                animateCamera(driverPosition, lookAtPoint, "Exit Driver's View");
                 controls.enablePan = false;
                 controls.enableZoom = false;
                 controls.minDistance = controls.maxDistance = 0.1;
@@ -173,27 +216,37 @@ const CarViewer = () => {
             stats.update();
         }
 
+        // Initialize scene and setup resources
         init();
-    }, [car])
+
+        // Cleanup resources when the car model changes or component unmounts
+        return cleanup;
+    }, [car]);
+
     return (
-        <div id='body'>
+        <div id="body">
             <input type="color" id="color-picker" />
             <button id="driver-view-btn">Driver's View</button>
-            <select id="driver-view-btn2" onChange={(event) =>{
-                    if(event.target.value == "untitled.glb") {
-                        setLookAtPointArr([0, 1.2, 0])
-                    }else if (event.target.value == "sport.glb"){
-                        setLookAtPointArr([0, 1, 0])
-                    } else {
-                        setLookAtPointArr([0.4, 1.7, -0.5])
-                    }
-                    setCar(event.target.value)
-                }}>
+            <select
+                id='driver-view-btn2'
+                onChange={(event) => {
+                    const selectedCar = event.target.value;
+                    document.getElementById("driver-view-btn").textContent = "Driver's View"
+                    setLookAtPointArr(
+                        selectedCar === "untitled.glb"
+                            ? [0, 1.2, 0]
+                            : selectedCar === "sport.glb"
+                                ? [0, 1, 0]
+                                : [0.4, 1.7, -0.5]
+                    );
+                    setCar(selectedCar);
+                }}
+            >
                 <option value="untitled.glb">Cylinder car</option>
                 <option value="sport.glb">Sports car</option>
                 <option value="new4x4.glb">Quad car</option>
             </select>
-            <div id="container"></div>
+            <div id="container" ref={containerRef}></div>
         </div>
     );
 };

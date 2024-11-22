@@ -44,7 +44,7 @@ function LoginClient() {
         setLoading(true)
         const validateToken = async () => {
             try {
-                const response = await getMethode(isValidateTokenRouteClient);
+                const response = await getMethode(isValidateTokenRouteClient, true);
 
                 navigate("/client");
 

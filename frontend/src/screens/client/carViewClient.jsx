@@ -10,7 +10,7 @@ function CarViewClient() {
         setLoading(true)
         const validateToken = async () => {
             try {
-                const response = await getMethode(isValidateTokenRouteClient);
+                const response = await getMethode(isValidateTokenRouteClient, true);
             } catch (error) {
                 console.log(error)
                 navigate("/authClient");

@@ -23,7 +23,7 @@ function DeleteUser({ setAlert ,deleteUser, setUsers, index}) {
             setUsers((prevItems) => prevItems.filter((_, i) => i !== index));
         } catch (err) {
             if (err.response.status == 401) {
-                return navigate("/authAdmin")
+                return navigate("/admin/authAdmin")
             }
             setAlert({
                 display: true,

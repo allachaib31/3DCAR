@@ -12,7 +12,7 @@ function CarViewAdmin() {
             try {
                 const response = await getMethode(isValidateTokenRoute);
             } catch (error) {
-                navigate("/authAdmin");
+                navigate("/admin/authAdmin");
 
             } finally {
                 setLoading(false);

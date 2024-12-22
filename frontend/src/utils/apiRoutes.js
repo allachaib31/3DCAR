@@ -8,12 +8,9 @@ export const resetPasswordAdminRoute = `${host}api/v1.0/admin/reset-password/`
 export const isValidateTokenRoute = `${host}api/v1.0/admin/isValidateToken`;
 // manage admin
 export const addAdminRoute = `${host}api/v1.0/admin/addAdmin`;
-export const updateAdminRoute = `${host}api/v1.0/admin/updateAdmin`;
-export const updatePasswordAdminRoute = `${host}api/v1.0/admin/updatePassword`;
-export const blockAdminRoute = `${host}api/v1.0/admin/blockAdmin`;
+export const renewSubscriptionRoute = `${host}api/v1.0/admin/renewSubscription`;
 export const deleteAdminRoute = `${host}api/v1.0/admin/deleteAdmin`;
 export const getAdminsRoute = `${host}api/v1.0/admin/getAdmins`;
-export const searchAdminRoute = `${host}api/v1.0/admin/searchAdmin`;
 // manage user
 export const addUserRoute = `${host}api/v1.0/admin/addUser`;
 export const changeStatusUserRoute = `${host}api/v1.0/admin/changeStatus`;

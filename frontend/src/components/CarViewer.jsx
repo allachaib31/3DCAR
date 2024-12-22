@@ -7,7 +7,7 @@ import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import Stats from 'three/addons/libs/stats.module.js';
 
 const CarViewer = () => {
-    const [car, setCar] = useState("untitled.glb");
+    const [car, setCar] = useState("cylnder.glb");
     const [lookAtPointArr, setLookAtPointArr] = useState([0, 1.2, 0]);
     const containerRef = useRef(null);
 
@@ -76,33 +76,13 @@ const CarViewer = () => {
 
             loader.load(`/models/gltf/${car}`, (gltf) => {
                 const carModel = gltf.scene;
-                const glassNames = new Set([
-                    "Plane_013", "Plane_014", "Plane_042", "Plane_024", "Glass", "Glass_Back_&_Front",
-                    "Seconde_Windows", "windows_", "windows__003", "windows__004", "Glass_Back",
-                    "windows__005", "windows__002", "windows__001", "Glass_Front", "Side_Windows",
-                    "front_lights", "front_lights_001", "carpaint_bumper_r_170", "carpaint_bumper_r_163",
-                    "carpaint_bumper_r_164", "carpaint_bumper_r_171", "carpaint_bumper_r_172",
-                    "carpaint_bumper_r_165", "carpaint_bumper_r_166", "carpaint_bumper_r_173",
-                    "rear_lights_001", "Backlight", "Circle_007"
-                ]);
 
                 carModel.traverse((child) => {
                     if (child.isMesh) {
-                        const material = glassNames.has(child.name)
-                            ? new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 })
-                            : new THREE.MeshPhysicalMaterial({
-                                color: 0x1b1b1b,
-                                metalness: 0.1,
-                                roughness: 0.5,
-                                clearcoat: 0.9,
-                                clearcoatRoughness: 0.2,
-                                sheen: 0.5,
-                                sheenColor: new THREE.Color(0x444444)
-                            });
-                        child.material = material;
-                        child.userData.clickable = true;
+                        child.userData.clickable = true; // Mark this object as clickable
                     }
                 });
+        
 
                 scene.add(carModel);
             });
@@ -233,18 +213,18 @@ const CarViewer = () => {
                     const selectedCar = event.target.value;
                     document.getElementById("driver-view-btn").textContent = "Driver's View"
                     setLookAtPointArr(
-                        selectedCar === "untitled.glb"
+                        selectedCar === "cylnder.glb"
                             ? [0, 1.2, 0]
-                            : selectedCar === "sport.glb"
-                                ? [0, 1, 0]
-                                : [0.4, 1.7, -0.5]
+                            : selectedCar === "BMW.glb"
+                                ? [0, 1.2, 0]
+                                : [0, 1.3, 0]
                     );
                     setCar(selectedCar);
                 }}
             >
-                <option value="untitled.glb">Cylinder car</option>
-                <option value="sport.glb">Sports car</option>
-                <option value="new4x4.glb">Quad car</option>
+                <option value="cylnder.glb">Cylinder car</option>
+                <option value="BMW.glb">Sports car</option>
+                <option value="4x4.glb">Quad car</option>
             </select>
             <div id="container" ref={containerRef}></div>
         </div>

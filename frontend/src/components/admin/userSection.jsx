@@ -12,6 +12,7 @@ function UserSection() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState(false);
+  const [userSelected, setUserSelected] = useState("");
   const [deleteUser, setDeleteUser] = useState(false);
   const [index, setIndex] = useState(false);
   const [alert, setAlert] = useState({
@@ -34,7 +35,7 @@ function UserSection() {
         });
       }
       if (err.response.status == 401 || err.response.status == 403) {
-        navigate("/authAdmin")
+        navigate("/admin/authAdmin")
       }
     }).finally(() => {
       setLoading(false);
@@ -76,6 +77,7 @@ function UserSection() {
                       <td>{user.email}</td>
                       <td>{user.subscriptionExpiryDate}</td>
                       <td><button className='btn btn-success' onClick={() => {
+                        setUserSelected(user._id);
                         document.getElementById('RenewSubscription').showModal();
                       }}>Renew subscription</button></td>
                       <td><button className='btn btn-error' onClick={() => {
@@ -94,7 +96,7 @@ function UserSection() {
       } />
       <AddUser setAlert={setAlert} setUsers={setUsers} />
       <DeleteUser setAlert={setAlert} deleteUser={deleteUser} setUsers={setUsers} index={index} />
-      <RenewSubscription />
+      <RenewSubscription users={users} setUsers={setUsers} userSelected={userSelected}/>
     </div>
   )
 }

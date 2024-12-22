@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../loading';
-import { deleteMethode } from '../../../utils/apiFetchs';
-import { deleteUserRoute } from '../../../utils/apiRoutes';
+import { patchMethode } from '../../../utils/apiFetchs';
+import { renewSubscriptionRoute } from '../../../utils/apiRoutes';
+import Alert from '../../alert';
 
-function RenewSubscription() {
-    /*const navigate = useNavigate();
+function RenewSubscription({ users ,setUsers ,userSelected}) {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [subscriptionDate, setSubscriptionDate] = useState("");
+    const [alert, setAlert] = useState({
+        display: false,
+    });
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -14,16 +19,27 @@ function RenewSubscription() {
             display: false,
         });
         try {
-            const response = await deleteMethode(`${deleteUserRoute}/${deleteUser._id}`);
+            const response = await patchMethode(`${renewSubscriptionRoute}`, {
+                idUser: userSelected,
+                subscriptionDate: subscriptionDate
+            });
             setAlert({
                 display: true,
                 status: true,
                 text: response.data.msg
             });
-            setUsers((prevItems) => prevItems.filter((_, i) => i !== index));
+            const newUser = [...users];
+            for (let i = 0; i < newUser.length; i++) {
+                if(newUser[i]._id.toString() == userSelected.toString()){
+                    newUser[i].subscriptionExpiryDate = response.data.subscriptionDate;
+                    break;
+                }
+                
+            }
+            setUsers(newUser);
         } catch (err) {
             if (err.response.status == 401) {
-                return navigate("/authAdmin")
+                return navigate("/admin/authAdmin")
             }
             setAlert({
                 display: true,
@@ -33,16 +49,18 @@ function RenewSubscription() {
         } finally {
             setLoading(false);
         }
-    }*/
+    }
     return (
         <dialog id="RenewSubscription" className="modal">
             <div className="modal-box">
-                <h1 className="font-bold text-lg">Delete User</h1>
-                <p>Are you sure you want to delete the user?</p>
+                <h1 className="font-bold text-lg">Renew subscription</h1>
+                {alert.display && <Alert msg={alert} />}
+                <input type="date" className="input input-bordered w-full max-w-xs" onChange={(event) => setSubscriptionDate(event.target.value)}/>
                 <div className="modal-action">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="btn ml-[0.5rem]">Close</button>
+                        <button disabled={loading} className='btn btn-primary' onClick={handleSubmit}>{loading ? <Loading /> : 'Submit'}</button>
                     </form>
                 </div>
             </div>

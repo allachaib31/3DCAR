@@ -30,7 +30,7 @@ function AddUser({ setAlert ,setUsers}) {
             setUsers((prev) => [...prev, response.data.newUser])
         } catch (err) {
             if (err.response.status == 401 || err.response.status == 403) {
-                return navigate("/admin/auth")
+                return navigate("/admin/authAdmin")
             }
             setAlert({
                 display: true,

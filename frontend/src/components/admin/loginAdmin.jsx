@@ -29,7 +29,7 @@ function LoginAdmin() {
                 status: true,
                 text: response.data.msg
             });
-            navigate("/");
+            navigate("/admin");
         } catch (err) {
             setAlert({
                 display: true,
@@ -46,7 +46,7 @@ function LoginAdmin() {
             try {
                 const response = await getMethode(isValidateTokenRoute);
 
-                navigate("/");
+                navigate("/admin");
 
             } catch (error) {
                 console.error('Error validating token');

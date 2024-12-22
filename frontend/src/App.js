@@ -17,18 +17,18 @@ function App() {
       <Router>
         <Routes>
           <Route path='/' element={<AppWeb />}>
-            <Route path='/' element={<AdminScreen />}>
-              <Route path='/' element={<AdminSection />}/>
-              <Route path='/users' element={<UserSection />}/>
+            <Route path='/' element={<CarViewClient />}>
+              <Route path='/' element={<CarViewer />} />
             </Route>
-            <Route path='/carViewer' element={<CarViewAdmin />}>
-              <Route path='/carViewer/' element={<CarViewer />}/>
+            <Route path='/admin' element={<AdminScreen />}>
+              <Route path='/admin' element={<AdminSection />} />
+              <Route path='/admin/users' element={<UserSection />} />
             </Route>
-            <Route path='/client' element={<CarViewClient />}>
-              <Route path='/client/' element={<CarViewer />}/>
+            <Route path='/admin/carViewer' element={<CarViewAdmin />}>
+              <Route path='/admin/carViewer/' element={<CarViewer />} />
             </Route>
-            <Route path='/authAdmin' element={<AuthAdmin />}/>
-            <Route path='/authClient' element={<AuthClient />}/>
+            <Route path='/admin/authAdmin' element={<AuthAdmin />} />
+            <Route path='/authClient' element={<AuthClient />} />
           </Route>
         </Routes>
       </Router>

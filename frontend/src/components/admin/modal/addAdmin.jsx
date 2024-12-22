@@ -31,7 +31,7 @@ function AddAdmin({ setAlert ,setAdmins}) {
             setAdmins((prev) => [...prev, response.data.newAdmin])
         } catch (err) {
             if (err.response.status == 401 || err.response.status == 403) {
-                return navigate("/authAdmin")
+                return navigate("/admin/authAdmin")
             }
             setAlert({
                 display: true,

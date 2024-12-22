@@ -29,7 +29,7 @@ function LoginClient() {
                 status: true,
                 text: response.data.msg
             });
-            navigate("/client");
+            navigate("/");
         } catch (err) {
             setAlert({
                 display: true,
@@ -46,7 +46,7 @@ function LoginClient() {
             try {
                 const response = await getMethode(isValidateTokenRouteClient, true);
 
-                navigate("/client");
+                navigate("/");
 
             } catch (error) {
                 console.error('Error validating token');

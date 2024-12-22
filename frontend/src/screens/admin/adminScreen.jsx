@@ -45,28 +45,28 @@ function AdminScreen() {
               <ul
                 tabIndex={0}
                 className="menu text-[1rem] menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                <li><Link to="/">Admins</Link></li>
+                <li><Link to="/admin">Admins</Link></li>
                 <li>
-                  <Link to="/users">Users</Link>
+                  <Link to="/admin/users">Users</Link>
                 </li>
-                <li><a href='/carViewer'>Car showroom</a></li>
+                <li><a href='/admin/carViewer'>Car showroom</a></li>
               </ul>
             </div>
             <a className="btn btn-ghost text-[3rem]">cars3D</a>
           </div>
           <div className="navbar-center hidden lg:flex">
             <ul className="menu text-[1rem] menu-horizontal px-1">
-              <li><Link to="/">Admins</Link></li>
+              <li><Link to="/admin">Admins</Link></li>
               <li>
-                <Link to="/users">Users</Link>
+                <Link to="/admin/users">Users</Link>
               </li>
-              <li><Link to='/carViewer'>Car showroom</Link></li>
+              <li><Link to='/admin/carViewer'>Car showroom</Link></li>
             </ul>
           </div>
           <div className="navbar-end">
             <a className="btn" onClick={() => {
               window.localStorage.removeItem("token");
-              navigate("/authAdmin")
+              navigate("/admin/authAdmin")
             }}>Logout</a>
           </div>
         </div>

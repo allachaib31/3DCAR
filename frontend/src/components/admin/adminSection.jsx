@@ -53,7 +53,7 @@ function AdminSection() {
                 });
             }
             if (err.response.status == 401 || err.response.status == 403) {
-                navigate("/authAdmin")
+                navigate("/admin/authAdmin")
             }
         }).finally(() => {
             setLoading(false);

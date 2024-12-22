@@ -25,7 +25,7 @@ function App() {
               <Route path='/admin/users' element={<UserSection />} />
             </Route>
             <Route path='/admin/carViewer' element={<CarViewAdmin />}>
-              <Route path='/admin/carViewer/' element={<CarViewer />} />
+              <Route path='/admin/carViewer' element={<CarViewer />} />
             </Route>
             <Route path='/admin/authAdmin' element={<AuthAdmin />} />
             <Route path='/authClient' element={<AuthClient />} />

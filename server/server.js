@@ -34,7 +34,6 @@ conn.once('open', () => {
     app
         .use(express.json({ limit: '50mb' }))
         .use(express.urlencoded({ limit: '50mb', extended: true }))
-        .use(express.static(path.join(__dirname, 'build')))
         .use(helmet())
         .disable("x-powered-by")
         .use(cors({
@@ -58,6 +57,7 @@ conn.once('open', () => {
         .use(manageUserRoute)
         .use(authClientRoute);
 
+    app.use(express.static(path.join(__dirname, 'build')));
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'build', 'index.html'));
     });

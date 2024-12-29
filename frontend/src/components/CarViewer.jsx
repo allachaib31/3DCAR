@@ -7,7 +7,7 @@ import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import Stats from 'three/addons/libs/stats.module.js';
 
 const CarViewer = () => {
-    const [car, setCar] = useState("cylnder.glb");
+    const [car, setCar] = useState("sportCar.glb");
     const [lookAtPointArr, setLookAtPointArr] = useState([0, 1.2, 0]);
     const containerRef = useRef(null);
 
@@ -73,19 +73,43 @@ const CarViewer = () => {
             dracoLoader.setDecoderPath('/jsm/libs/draco/gltf/');
             const loader = new GLTFLoader();
             loader.setDRACOLoader(dracoLoader);
+            const glassMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
 
             loader.load(`/models/gltf/${car}`, (gltf) => {
                 const carModel = gltf.scene;
 
                 carModel.traverse((child) => {
+                    console.log(child.name)
+                    const clickableParts = [
+                        "seats",
+                        "body",
+                        "body001",
+                        "body002",
+                        "windows",
+                        "guide",
+                        "internal",
+                        "internal two",
+                        "glass_front",
+                        "glass_back"
+                    ];
                     if (child.isMesh) {
-                        child.userData.clickable = true; // Mark this object as clickable
-                    }
+                        // Liste des noms des parties cliquable
+                        if(child.name.includes('windows') || child.name.includes('glass_front') || child.name.includes('glass_back')){
+                            child.material = glassMaterial;
+                        }
+                        child.userData.clickable = true;
+                    } /*else {
+                        // Vérifier si le nom correspond à une partie cliquable
+                        if (clickableParts.includes(child.name)) {
+                            console.log("child include : " + child.name)
+                            child.userData.clickable = true; // Marquer comme cliquable
+                        }
+                    }*/
                 });
-        
 
                 scene.add(carModel);
             });
+
 
             // Event listeners
             window.addEventListener('resize', onWindowResize);
@@ -213,18 +237,18 @@ const CarViewer = () => {
                     const selectedCar = event.target.value;
                     document.getElementById("driver-view-btn").textContent = "Driver's View"
                     setLookAtPointArr(
-                        selectedCar === "cylnder.glb"
+                        selectedCar === "sedanCar.glb"
                             ? [0, 1.2, 0]
-                            : selectedCar === "BMW.glb"
-                                ? [0, 1.2, 0]
-                                : [0, 1.3, 0]
+                            : selectedCar === "4x4Car.glb"
+                                ? [0, 1.3, 0]
+                                : [0, 1.1, 0]
                     );
                     setCar(selectedCar);
                 }}
             >
-                <option value="cylnder.glb">Cylinder car</option>
-                <option value="BMW.glb">Sports car</option>
-                <option value="4x4.glb">Quad car</option>
+               {/* <option value="sedanCar.glb">Cylinder car</option>*/}
+                <option value="sportCar.glb">Sports car</option>
+                <option value="4x4Car.glb">Quad car</option>
             </select>
             <div id="container" ref={containerRef}></div>
         </div>

@@ -1,5 +1,5 @@
-//export const host = `http://localhost:5000/`
-export const host = `/`
+export const host = `http://localhost:5000/`
+//export const host = `/`
 // admin routes
 // auth
 export const authAdminRoute = `${host}api/v1.0/admin/auth`;

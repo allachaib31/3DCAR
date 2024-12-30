@@ -5,12 +5,12 @@ const connectDB = require('./config/db');
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const compression = require("compression");
 const { rateLimit } = require("express-rate-limit");
 const mongoose = require("mongoose");
 const path = require('path');
 const helmet = require("helmet");
 const escape = require('./middleware/escape');
+const compression = require("compression");
 
 const PORT = process.env.PORT;
 
@@ -30,18 +30,17 @@ conn.once('open', () => {
         headers: true
     });
 
-    // Set up Express middlewares
     app
         .use(express.json({ limit: '50mb' }))
         .use(express.urlencoded({ limit: '50mb', extended: true }))
-        .use(helmet())
+        app.use(compression({ filter: () => false }))
+        //.use(helmet())
         .disable("x-powered-by")
         .use(cors({
             origin: process.env.URL,
             credentials: true
         }))
         .use(limiter)
-        .use(compression())
         .use(cookieParser())
         .use(morgan(process.env.MODE))
         .use(escape);

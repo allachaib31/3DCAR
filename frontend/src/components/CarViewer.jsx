@@ -85,18 +85,36 @@ const CarViewer = () => {
                         "body001",
                         "body002",
                         "windows",
+                        "windows001",
+                        "windows002",
+                        "windows003",
                         "guide",
                         "internal",
                         "internal two",
+                        "internal_two",
                         "glass_front",
                         "glass_back"
                     ];
-                    const glassMaterial = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0.25, roughness: 0, transmission: 1.0 });
+                    const glassMaterial = new THREE.MeshPhysicalMaterial({
+                        color: 0xffffff,           // Clear glass
+                        metalness: 0.0,            // Minimal metallic effect
+                        roughness: 0.05,           // Smooth surface with slight imperfections
+                        transmission: 0.95,        // High transparency
+                        clearcoat: 1.0,            // Strong clear coat for enhanced reflections
+                        clearcoatRoughness: 0.0,   // Perfectly polished clear coat
+                        ior: 1.5,                  // Index of refraction for glass
+                        envMapIntensity: 1.0,      // Enhance environment map reflections
+                        depthWrite: true,          // Ensure depth sorting works correctly
+                        transparent: true,   
+                    });
+                    glassMaterial.side = THREE.DoubleSide;
+
                     if (child.isMesh) {
                         console.log(child.name)
                         // Liste des noms des parties cliquable
-                        if(child.name.includes('windows') || child.name.includes('glass_front') || child.name.includes('glass_back')){
+                        if (child.name.includes('windows') || child.name.includes('windows001') || child.name.includes('windows002') || child.name.includes('windows003') || child.name.includes('glass_front') || child.name.includes('glass_back')) {
                             child.material = glassMaterial;
+                            child.renderOrder = 1;
                         }
                         if (clickableParts.includes(child.name)) {
                             console.log("child include : " + child.name)
@@ -251,7 +269,7 @@ const CarViewer = () => {
                     setCar(selectedCar);
                 }}
             >
-                <option value="sedan.glb">Cylinder car</option>
+                <option value="sedan.glb">Sedan car</option>
                 <option value="sportCar.glb">Sports car</option>
                 <option value="4x4.glb">Quad car</option>
             </select>

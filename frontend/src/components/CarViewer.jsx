@@ -90,8 +90,8 @@ const CarViewer = () => {
         };
         window.addEventListener('resize', onResize);
         const showroomBounds = {
-            minX: -5, maxX: 5,  // Horizontal bounds
-            minY: 0.5, maxY: 4, // Vertical bounds (roof at y = 4)
+            minX: -15, maxX: 7,  // Horizontal bounds
+            minY: 0.5, maxY: 14, // Vertical bounds (roof at y = 4)
             minZ: -5, maxZ: 5   // Depth bounds
         };
         
@@ -107,7 +107,7 @@ const CarViewer = () => {
             stats.update();
         
             // Clamp camera position to showroom bounds
-            clampPosition(camera.position, showroomBounds);
+            //clampPosition(camera.position, showroomBounds);
         
             renderer.render(scene, camera);
             requestAnimationFrame(animate);

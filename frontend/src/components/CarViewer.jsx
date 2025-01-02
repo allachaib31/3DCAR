@@ -20,11 +20,22 @@ const CarViewer = () => {
     const rendererRef = useRef(null);
     const statsRef = useRef(null);
     const selectedMeshRef = useRef(null);
+    const [loading, setLoading] = useState(true);
     const [rangeValue, setRangeValue] = useState(1);
     const [isDriverView, setIsDriverView] = useState(false);
+    const [counter, setCounter] = useState(0);
+
     const driverPosition = new THREE.Vector3(0.3, 1.0, 0.3);
     const externalPosition = new THREE.Vector3(4.25, 2.5, -4.5);
-
+    useEffect(() => {
+        console.log(user.subscriptionExpiryDate)
+        const startDate = new Date(user.subscriptionExpiryDate);
+        const currentTime = new Date();
+        const timeDifference = Math.floor((startDate - currentTime) / 1000); // Time difference in seconds
+        if (timeDifference > 0) {
+            setCounter(timeDifference);
+        }
+    }, [user])
     // Initialize the showroom and scene
     useEffect(() => {
         const container = containerRef.current;
@@ -49,7 +60,7 @@ const CarViewer = () => {
         controls.minDistance = 1; // Prevents the camera from getting too close
         controls.maxDistance = 9; // Maximum zoom-out distance
         controls.maxPolarAngle = THREE.MathUtils.degToRad(85); // Prevent looking directly down
-        controls.minPolarAngle = THREE.MathUtils.degToRad(15); 
+        controls.minPolarAngle = THREE.MathUtils.degToRad(15);
         controls.target.set(0, 0.5, 0);
         controls.update();
         controlsRef.current = controls;
@@ -97,21 +108,21 @@ const CarViewer = () => {
             minY: 0.5, maxY: 14, // Vertical bounds (roof at y = 4)
             minZ: -5, maxZ: 5   // Depth bounds
         };
-        
-        
+
+
         const clampPosition = (position, bounds) => {
             position.x = THREE.MathUtils.clamp(position.x, bounds.minX, bounds.maxX);
             position.y = THREE.MathUtils.clamp(position.y, bounds.minY, bounds.maxY);
             position.z = THREE.MathUtils.clamp(position.z, bounds.minZ, bounds.maxZ);
         };
-        
+
         const animate = () => {
             controls.update();
             stats.update();
-        
+
             // Clamp camera position to showroom bounds
             //clampPosition(camera.position, showroomBounds);
-        
+
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
         };
@@ -129,6 +140,7 @@ const CarViewer = () => {
         const scene = sceneRef.current;
         const camera = cameraRef.current;
         const controls = controlsRef.current;
+        setLoading(true);
 
         // Reset driver view if active
         if (isDriverView) {
@@ -213,7 +225,7 @@ const CarViewer = () => {
                 glassMaterial.side = THREE.DoubleSide;
 
                 if (child.isMesh) {
-                   // console.log(child.name)
+                    // console.log(child.name)
                     if (
                         child.name.includes('windows') || child.name.includes('windows001') || child.name.includes('windows002') || child.name.includes('windows003') || child.name.includes('windows004') || child.name.includes('windows005') || child.name.includes('windows006') || child.name.includes('glass_front') || child.name.includes('glass_back') || child.name.includes('glass_front001') || child.name.includes('glass_back001') || child.name.includes('glass_back_1')
                     ) {
@@ -227,6 +239,7 @@ const CarViewer = () => {
             });
 
             scene.add(carModel);
+            setLoading(false);
         });
     }, [car]);
 
@@ -237,6 +250,7 @@ const CarViewer = () => {
         const mouse = new THREE.Vector2();
         const colorPicker = document.getElementById('color-picker');
         const glassRange = document.getElementById('glass-range');
+        const displayValueRange = document.getElementById("displayValueRange");
 
         const onClick = (event) => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -254,11 +268,13 @@ const CarViewer = () => {
                         // Show the range slider for glass color adjustment
                         selectedMeshRef.current = clickedMesh;
                         glassRange.style.display = 'block';
+                        displayValueRange.style.display = 'block';
                         colorPicker.style.display = 'none';
                         // Initialize the slider position based on the current glass color
                         const currentBrightness = clickedMesh.material.color.r; // Assuming R, G, and B are equal
                         glassRange.value = currentBrightness;
-                        
+                        setRangeValue(glassRange.value);
+
                     } else {
                         // For other meshes, use the color picker
                         selectedMeshRef.current = clickedMesh;
@@ -267,12 +283,14 @@ const CarViewer = () => {
 
                         // Hide the range slider if it's visible
                         glassRange.style.display = 'none';
+                        displayValueRange.style.display = 'none';
                     }
                 }
             } else {
                 // Hide both color picker and range slider if no mesh is clicked
                 colorPicker.style.display = 'none';
                 glassRange.style.display = 'none';
+                displayValueRange.style.display = 'none';
                 selectedMeshRef.current = null;
             }
         };
@@ -347,70 +365,95 @@ const CarViewer = () => {
         };
         requestAnimationFrame(animationStep);
     };
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCounter(prevCounter => prevCounter > 0 ? prevCounter - 1 : 0);
+        }, 1000);
 
+        return () => clearInterval(interval);
+    }, []);
+    const days = Math.floor(counter / (60 * 60 * 24));
+    const hours = Math.floor((counter % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((counter % (60 * 60)) / 60);
+    const seconds = counter % 60;
     return (
         <div id="body">
-            {user.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[20rem] h-[20rem] top-[5rem]'/>}
-            <input type="color" id="color-picker" style={{
-                position: 'absolute',
-                top: "20px",
-                right: "390px",
-                zIndex: "999"
-            }} />
-            <input
-                type="range"
-                id="glass-range"
-                min="0"
-                max="1"
-                step="0.01"
-                onChange={(event) => setRangeValue(event.target.value)}
-                style={{
-                    position: 'absolute',
-                    top: "20px",
-                    right: "490px",
-                    zIndex: "999"
-                }}
-            />
-            <div
-                className='bg-white p-[1rem] font-bold text-black rounded-[14px]'
-                style={{
-                    position: 'absolute',
-                    top: "50px",
-                    right: "490px",
-                    zIndex: "999"
-                }}
-            >
-                {parseFloat(rangeValue).toFixed(2)}
+            <div className="absolute right-1/2 translate-x-1/2 grid grid-flow-col gap-5 text-center auto-cols-max">
+            <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+                    <span className="countdown font-mono text-5xl">
+                        <span style={{ "--value": seconds }}></span>
+                    </span>
+                    ثانية
+                </div>
+                <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+                    <span className="countdown font-mono text-5xl">
+                        <span style={{ "--value": minutes }}></span>
+                    </span>
+                    دقيقة
+                </div>
+                <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+                    <span className="countdown font-mono text-5xl">
+                        <span style={{ "--value": hours }}></span>
+                    </span>
+                    ساعات
+                </div>
+                <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+                    <span className="countdown font-mono text-5xl">
+                        <span style={{ "--value": days }}></span>
+                    </span>
+                    أيام
+                </div>
             </div>
-            <button id="driver-view-btn" onClick={toggleDriverView}>
-                {isDriverView ? "الخروج من عرض السائق" : "رؤية السائق"}
-            </button>
-            <select
-                id="driver-view-btn2"
-                onChange={(event) => {
-                    const selectedCar = event.target.value;
-                    setLookAtPointArr(
-                        selectedCar === "sedan.glb"
-                            ? [0, 1.5, 0]
-                            : selectedCar === "4x4.glb"
-                                ? [0, 2, 0]
-                                :  selectedCar === "sportCar.glb" 
-                                ? [0, 1.7, 0]
-                                :  selectedCar === "middelCar.glb" 
-                                ? [0, 2,0] 
-                                : [0, 2.5, 0]                                 
-                    );
-                    setCar(selectedCar);
-                }}
-            >
-                <option value="sedan.glb">سيارة سيدان </option>
-                <option value="sportCar.glb">سيارة رياضية </option>
-                <option value="4x4.glb">سيارة متوسطة</option>
-                <option value="middelCar.glb">سيارة عائلية</option>
-                <option value="nissan.glb"> سيارة كبيرة</option>
-            </select>
+            {user.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[10rem] h-[10rem] top-full right-full -translate-y-full translate-x-full' />}
+            <div className='flex items-center gap-[1rem] absolute top-[20px] right-[20px]'>
+                <select
+                    id="driver-view-btn2"
+                    className='select select-bordered'
+                    disabled={loading}
+                    onChange={(event) => {
+                        const selectedCar = event.target.value;
+                        setLookAtPointArr(
+                            selectedCar === "sedan.glb"
+                                ? [0, 1.5, 0]
+                                : selectedCar === "4x4.glb"
+                                    ? [0, 2, 0]
+                                    : selectedCar === "sportCar.glb"
+                                        ? [0, 1.7, 0]
+                                        : selectedCar === "middelCar.glb"
+                                            ? [0, 2, 0]
+                                            : [0, 2.5, 0]
+                        );
+                        setCar(selectedCar);
+                    }}
+                >
+                    <option className='text-black' value="sedan.glb">سيارة سيدان </option>
+                    <option className='text-black' value="sportCar.glb">سيارة رياضية </option>
+                    <option className='text-black' value="4x4.glb">سيارة متوسطة</option>
+                    <option className='text-black' value="middelCar.glb">سيارة عائلية</option>
+                    <option className='text-black' value="nissan.glb"> سيارة كبيرة</option>
+                </select>
+                <button id="driver-view-btn" disabled={loading} onClick={toggleDriverView} className='btn btn-primary'>
+                    {isDriverView ? "الخروج من عرض السائق" : "رؤية السائق"}
+                </button>
+                <input disabled={loading} type="color" id="color-picker" />
+                <input
+                    type="range"
+                    disabled={loading}
+                    id="glass-range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    onChange={(event) => setRangeValue(event.target.value)}
+                />
+                <div
+                    id="displayValueRange"
+                    className='bg-white p-[1rem] font-bold text-black rounded-[14px]'
+                >
+                    {parseFloat(rangeValue).toFixed(2)}
+                </div>
+            </div>
             <div className='z-0' id="container" ref={containerRef}></div>
-        </div>
+        </div >
     );
 };
 

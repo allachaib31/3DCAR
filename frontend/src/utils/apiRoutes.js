@@ -15,6 +15,7 @@ export const getAdminsRoute = `${host}api/v1.0/admin/getAdmins`;
 export const addUserRoute = `${host}api/v1.0/admin/addUser`;
 export const changeStatusUserRoute = `${host}api/v1.0/admin/changeStatus`;
 export const deleteUserRoute = `${host}api/v1.0/admin/deleteUser`;
+export const uploadImageRoute = `${host}api/v1.0/admin/updateImageUser`;
 export const getUsersRoute = `${host}api/v1.0/admin/getUsers`;
 
 // client routes

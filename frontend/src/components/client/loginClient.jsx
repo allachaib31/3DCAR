@@ -93,7 +93,7 @@ function LoginClient() {
                                 title="اشتراك سنوي"
                                 price="2330 ريال"
                                 discountedPrice="699 ريال"
-                                discount="خصم 30%"
+                                discount="خصم 60%"
                                 features={[
                                     "رؤية السيارة بزاوية 360 درجة",
                                     "اختيار الدرجة المناسبة للسيارة",
@@ -108,7 +108,7 @@ function LoginClient() {
                         {/* Login Form */}
                         <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
                             <form className="card-body" onSubmit={handleSubmit}>
-                                <h1 className="text-3xl text-center font-bold">مرحباً بالعميل</h1>
+                                <h1 className="text-3xl text-center font-bold">حيالله من جانا</h1>
                                 {alert.display && <Alert msg={alert} />}
                                 <div className="form-control">
                                     <label htmlFor="email" className="sr-only">

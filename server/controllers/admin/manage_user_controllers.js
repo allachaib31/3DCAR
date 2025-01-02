@@ -64,6 +64,38 @@ exports.addUser = async (req, res) => {
     }
 };
 
+exports.updateImageUser = async (req, res) => {
+    const { file } = req;
+    const { userId } = req.body;
+    try {
+        console.log(userId)
+        let newFile
+        if (file) {
+            newFile = await saveFile(file, File, Readable, bucket);
+        }
+
+        // Check if an User with the same email or username already exists
+        let existingUser = await User.findById(userId);
+        if (!existingUser) {
+            return res.status(httpStatus.CONFLICT).json({
+                msg: "user not found"
+            });
+        }
+        existingUser.image = newFile._id;
+        existingUser.save();
+
+        // Send response
+        return res.status(httpStatus.CREATED).json({
+            msg: "تم رفع الصورة بنجاح",
+        });
+    } catch (err) {
+        console.log(err)
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            msg: "خطأ في الخادم",
+            error: err.message,
+        });
+    }
+}
 
 exports.deleteUser = async (req, res) => {
     const { id } = req.params;

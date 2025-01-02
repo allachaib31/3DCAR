@@ -378,33 +378,33 @@ const CarViewer = () => {
     const seconds = counter % 60;
     return (
         <div id="body">
-            <div className="absolute right-1/2 translate-x-1/2 grid grid-flow-col gap-5 text-center auto-cols-max">
-            <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-                    <span className="countdown font-mono text-5xl">
+            <div className="absolute top-full -translate-y-full grid grid-flow-col gap-5 text-center auto-cols-max">
+                <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+                    <span className="countdown font-mono text-3xl">
                         <span style={{ "--value": seconds }}></span>
                     </span>
                     ثانية
                 </div>
                 <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-                    <span className="countdown font-mono text-5xl">
+                    <span className="countdown font-mono text-3xl">
                         <span style={{ "--value": minutes }}></span>
                     </span>
                     دقيقة
                 </div>
                 <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-                    <span className="countdown font-mono text-5xl">
+                    <span className="countdown font-mono text-3xl">
                         <span style={{ "--value": hours }}></span>
                     </span>
                     ساعات
                 </div>
                 <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-                    <span className="countdown font-mono text-5xl">
+                    <span className="countdown font-mono text-3xl">
                         <span style={{ "--value": days }}></span>
                     </span>
                     أيام
                 </div>
             </div>
-            {user.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[10rem] h-[10rem] top-full right-full -translate-y-full translate-x-full' />}
+            {user.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[6rem] h-[6rem] top-full right-full -translate-y-full translate-x-full' />}
             <div className='flex items-center gap-[1rem] absolute top-[20px] right-[20px]'>
                 <select
                     id="driver-view-btn2"

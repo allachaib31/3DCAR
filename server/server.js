@@ -50,11 +50,14 @@ conn.once('open', () => {
     const manageAdminRoute = require("./routes/admin/manage_admin_route");
     const manageUserRoute = require("./routes/admin/manage_user_route");
     const authClientRoute = require("./routes/client/auth_client_routes");
+    const fileRoute = require("./routes/files/files_routes");
+
     app
         .use(authAdminRoute)
         .use(manageAdminRoute)
         .use(manageUserRoute)
-        .use(authClientRoute);
+        .use(authClientRoute)
+        .use(fileRoute);
 
     app.use(express.static(path.join(__dirname, 'build')));
     app.get('*', (req, res) => {

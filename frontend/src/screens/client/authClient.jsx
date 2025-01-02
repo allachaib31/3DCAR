@@ -3,7 +3,7 @@ import LoginClient from '../../components/client/loginClient'
 
 function AuthClient() {
   return (
-    <div className='min-h-screen flex justify-center items-center'>
+    <div>
         <LoginClient />
     </div>
   )

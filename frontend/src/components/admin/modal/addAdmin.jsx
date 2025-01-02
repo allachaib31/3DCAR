@@ -45,11 +45,11 @@ function AddAdmin({ setAlert ,setAdmins}) {
     return (
         <dialog id="addAdmin" className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg mb-[0.5rem]">Add Admin</h3>
+                <h3 className="font-bold text-lg mb-[0.5rem]">إضافة مسؤول</h3>
                 <hr />
                 <form className='flex flex-col gap-[1rem] mt-[1rem]'>
                     <label className="input input-bordered flex items-center gap-2">
-                        Name
+                    اسم
                         <input type="text" className="grow" onChange={(event) => {
                             setInputs((prevInputs) => {
                                 return {
@@ -60,7 +60,7 @@ function AddAdmin({ setAlert ,setAdmins}) {
                         }} />
                     </label>
                     <label className="input input-bordered flex items-center gap-2">
-                        Username
+                    اسم المستخدم
                         <input type="text" className="grow" onChange={(event) => {
                             setInputs((prevInputs) => {
                                 return {
@@ -71,7 +71,7 @@ function AddAdmin({ setAlert ,setAdmins}) {
                         }} />
                     </label>
                     <label className="input input-bordered flex items-center gap-2">
-                        Email
+                    بريد إلكتروني
                         <input type="email" className="grow" onChange={(event) => {
                             setInputs((prevInputs) => {
                                 return {
@@ -82,7 +82,7 @@ function AddAdmin({ setAlert ,setAdmins}) {
                         }} />
                     </label>
                     <label className="input input-bordered flex items-center gap-2">
-                        Password
+                    كلمة المرور
                         <input type="password" className="grow" onChange={(event) => {
                             setInputs((prevInputs) => {
                                 return {
@@ -96,8 +96,8 @@ function AddAdmin({ setAlert ,setAdmins}) {
                 <div className="modal-action">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
-                        <button className="btn ml-[0.5rem]">Close</button>
-                        <button disabled={loading} className='btn btn-primary' onClick={handleSubmit}>{loading ? <Loading /> : 'Submit'}</button>
+                        <button className="btn ml-[0.5rem]">اغلاق</button>
+                        <button disabled={loading} className='btn btn-primary' onClick={handleSubmit}>{loading ? <Loading /> : 'ارسال'}</button>
                     </form>
                 </div>
             </div>

@@ -6,11 +6,13 @@ import { isValidateTokenRouteClient } from '../../utils/apiRoutes';
 function CarViewClient() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(false);
     useEffect(() => {
         setLoading(true)
         const validateToken = async () => {
             try {
                 const response = await getMethode(isValidateTokenRouteClient, true);
+                setUser(response.data.user);
             } catch (error) {
                 console.log(error)
                 navigate("/authClient");
@@ -24,7 +26,7 @@ function CarViewClient() {
     }, []);
     return (
         <div>
-            <Outlet />
+            <Outlet context={{user}}/>
         </div>
     )
 }

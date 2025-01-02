@@ -61,7 +61,7 @@ function LoginAdmin() {
         <LoadingScreen loading={loading} component={
             <div>
                 <form onSubmit={handleSubmit}>
-                    <h1 className='text-3xl text-center font-bold'>Welcome Admin</h1>
+                    <h1 className='text-3xl text-center font-bold'>مرحباً بالمسؤول</h1>
                     {alert.display && <Alert msg={alert} />} {/* Display error message */}
                     <label className="input input-bordered flex items-center gap-2 my-[1rem]">
                         <svg
@@ -75,9 +75,9 @@ function LoginAdmin() {
                                 d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
                         </svg>
                         <input
-                            type="text"
+                            type="email"
                             className="grow"
-                            placeholder="email"
+                            placeholder="بريد إلكتروني"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)} // Update email state
                             required
@@ -96,7 +96,7 @@ function LoginAdmin() {
                         </svg>
                         <input
                             type="password"
-                            placeholder='password'
+                            placeholder='كلمة المرور'
                             className="grow"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -104,7 +104,7 @@ function LoginAdmin() {
                         />
                     </label>
                     <button className='btn btn-primary w-full' type="submit" disabled={loading}>
-                        {loading ? <Loading /> : 'login'}
+                        {loading ? <Loading /> : 'تسجيل الدخول'}
                     </button>
                 </form>
             </div>

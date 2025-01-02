@@ -63,7 +63,7 @@ function AdminSection() {
         <div>
             <div className='flex sm:flex-row flex-col gap-[1rem] justify-between'>
                 <button className='btn btn-primary shadow-sm
-           shadow-gray-400' onClick={() => document.getElementById('addAdmin').showModal()}>Add admin</button>
+           shadow-gray-400' onClick={() => document.getElementById('addAdmin').showModal()}>إضافة المشرف</button>
             </div>
             <div className='my-[0.1rem]'>
                 {alert.display && <Alert msg={alert} />}
@@ -75,9 +75,9 @@ function AdminSection() {
                         <thead>
                             <tr className='text-[1rem]'>
                                 <th>ID</th>
-                                <th>Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
+                                <th>اسم</th>
+                                <th>اسم المستخدم</th>
+                                <th>بريد إلكتروني</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -95,7 +95,7 @@ function AdminSection() {
                                                 setDeleteAdmin(admin);
                                                 setIndex(index);
                                                 document.getElementById('deleteAdmin').showModal();
-                                            }}>Delete</button></td>
+                                            }}>الحذف</button></td>
                                         </tr>
                                     )
                                 })

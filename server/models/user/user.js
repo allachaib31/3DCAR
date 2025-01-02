@@ -32,6 +32,9 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    image: {
+        type: mongoose.Schema.Types.ObjectId,
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin',
@@ -57,6 +60,7 @@ const validateUser = (user) => {
         name: Joi.string().min(2).max(255).required(),
         password: Joi.string().min(6).max(255).required(),
         subscriptionExpiryDate: Joi.date().required(),
+        image: Joi.string().optional().allow(null, ""),
         createdBy: Joi.string().optional(),
         createdAt: Joi.date().optional(),
     });

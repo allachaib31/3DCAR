@@ -45,7 +45,7 @@ function UserSection() {
     <div>
       <div className='flex sm:flex-row flex-col gap-[1rem] justify-between'>
         <button className='btn btn-primary shadow-sm
-         shadow-gray-400' onClick={() => document.getElementById('addUser').showModal()}>Add Users</button>
+         shadow-gray-400' onClick={() => document.getElementById('addUser').showModal()}>إضافة المستخدمين</button>
       </div>
       <div className='my-[0.1rem]'>
         {alert.display && <Alert msg={alert} />}
@@ -57,10 +57,10 @@ function UserSection() {
             <thead>
               <tr className='text-[1rem]'>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Subscription Expiry Date</th>
+                <th>اسم</th>
+                <th>اسم المستخدم</th>
+                <th>بريد إلكتروني</th>
+                <th>تاريخ انتهاء الاشتراك</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -79,12 +79,12 @@ function UserSection() {
                       <td><button className='btn btn-success' onClick={() => {
                         setUserSelected(user._id);
                         document.getElementById('RenewSubscription').showModal();
-                      }}>Renew subscription</button></td>
+                      }}>تجديد الاشتراك</button></td>
                       <td><button className='btn btn-error' onClick={() => {
                         setDeleteUser(user);
                         setIndex(index);
                         document.getElementById('deleteUser').showModal();
-                      }}>Delete</button></td>
+                      }}>الحذف</button></td>
                     </tr>
                   )
                 })

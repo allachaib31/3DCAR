@@ -21,7 +21,7 @@ exports.addAdmin = async (req, res) => {
         let existingAdmin = await Admin.findOne({ $or: [{ email }, { username }] });
         if (existingAdmin) {
             return res.status(httpStatus.CONFLICT).json({
-                msg: "Email or username already exists"
+                msg: "البريد الإلكتروني أو اسم المستخدم موجود بالفعل"
             });
         }
 
@@ -41,13 +41,13 @@ exports.addAdmin = async (req, res) => {
         await newAdmin.save();
         // Send response
         return res.status(httpStatus.CREATED).json({
-            msg: "The administrator was created successfully.",
+            msg: "تم إنشاء المسؤول بنجاح.",
             newAdmin
         });
     } catch (err) {
         console.error(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-            msg: "Server error",
+            msg: "خطأ في الخادم",
             error: err.message,
         });
     }
@@ -61,7 +61,7 @@ exports.renewSubscription = async (req, res) => {
         // Validate input
         if (!subscriptionDate || !idUser) {
             return res.status(httpStatus.BAD_REQUEST).json({
-                msg: "Subscription date and user ID are required."
+                msg: "تاريخ الاشتراك ومعرف المستخدم مطلوبان."
             });
         }
 
@@ -69,7 +69,7 @@ exports.renewSubscription = async (req, res) => {
         const user = await User.findById(idUser); // Assuming Admin is used for users as well
         if (!user) {
             return res.status(httpStatus.NOT_FOUND).json({
-                msg: "User not found."
+                msg: "لم يتم العثور على المستخدم."
             });
         }
 
@@ -79,13 +79,13 @@ exports.renewSubscription = async (req, res) => {
 
         // Respond to the client
         return res.status(httpStatus.OK).json({
-            msg: "Subscription renewed successfully.",
+            msg: "تم تجديد الاشتراك بنجاح.",
             subscriptionDate: user.subscriptionExpiryDate
         });
     } catch (err) {
         console.error(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-            msg: "Server error",
+            msg: "خطأ في الخادم",
             error: err.message,
         });
     }

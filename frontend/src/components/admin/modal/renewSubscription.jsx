@@ -53,14 +53,14 @@ function RenewSubscription({ users ,setUsers ,userSelected}) {
     return (
         <dialog id="RenewSubscription" className="modal">
             <div className="modal-box">
-                <h1 className="font-bold text-lg">Renew subscription</h1>
+                <h1 className="font-bold text-lg">تجديد الاشتراك</h1>
                 {alert.display && <Alert msg={alert} />}
                 <input type="date" className="input input-bordered w-full max-w-xs" onChange={(event) => setSubscriptionDate(event.target.value)}/>
                 <div className="modal-action">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
-                        <button className="btn ml-[0.5rem]">Close</button>
-                        <button disabled={loading} className='btn btn-primary' onClick={handleSubmit}>{loading ? <Loading /> : 'Submit'}</button>
+                        <button className="btn ml-[0.5rem]">اغلاق</button>
+                        <button disabled={loading} className='btn btn-primary' onClick={handleSubmit}>{loading ? <Loading /> : 'ارسال'}</button>
                     </form>
                 </div>
             </div>

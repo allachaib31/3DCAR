@@ -21,3 +21,6 @@ export const getUsersRoute = `${host}api/v1.0/admin/getUsers`;
 //auth
 export const authClientRoute = `${host}api/v1.0/client/auth`;
 export const isValidateTokenRouteClient = `${host}api/v1.0/client/isValidateToken`;
+
+// manage file
+export const getFileRoute = `${host}api/v1.0/file/`

@@ -5,10 +5,13 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import Stats from 'three/addons/libs/stats.module.js';
+import { useOutletContext } from 'react-router-dom';
+import { getFileRoute } from '../utils/apiRoutes';
 
 const CarViewer = () => {
     const [car, setCar] = useState("sedan.glb");
-    const [lookAtPointArr, setLookAtPointArr] = useState([0, 1.9, 0]);
+    const [lookAtPointArr, setLookAtPointArr] = useState([0, 1.7, 0]);
+    const { user } = useOutletContext();
     const containerRef = useRef(null);
     const carRef = useRef(null);
     const sceneRef = useRef(null);
@@ -17,8 +20,8 @@ const CarViewer = () => {
     const rendererRef = useRef(null);
     const statsRef = useRef(null);
     const selectedMeshRef = useRef(null);
+    const [rangeValue, setRangeValue] = useState(1);
     const [isDriverView, setIsDriverView] = useState(false);
-
     const driverPosition = new THREE.Vector3(0.3, 1.0, 0.3);
     const externalPosition = new THREE.Vector3(4.25, 2.5, -4.5);
 
@@ -161,7 +164,6 @@ const CarViewer = () => {
         dracoLoader.setDecoderPath('/jsm/libs/draco/gltf/');
         const loader = new GLTFLoader();
         loader.setDRACOLoader(dracoLoader);
-        console.log("========================")
         loader.load(`/models/gltf/${car}`, (gltf) => {
             const carModel = gltf.scene;
             carRef.current = carModel;
@@ -211,7 +213,7 @@ const CarViewer = () => {
                 glassMaterial.side = THREE.DoubleSide;
 
                 if (child.isMesh) {
-                    console.log(child.name)
+                   // console.log(child.name)
                     if (
                         child.name.includes('windows') || child.name.includes('windows001') || child.name.includes('windows002') || child.name.includes('windows003') || child.name.includes('windows004') || child.name.includes('windows005') || child.name.includes('windows006') || child.name.includes('glass_front') || child.name.includes('glass_back') || child.name.includes('glass_front001') || child.name.includes('glass_back001') || child.name.includes('glass_back_1')
                     ) {
@@ -247,9 +249,7 @@ const CarViewer = () => {
                 const clickedMesh = intersects[0].object;
                 if (clickedMesh.userData.clickable) {
                     if (
-                        clickedMesh.name.includes('windows') ||
-                        clickedMesh.name.includes('glass_front') ||
-                        clickedMesh.name.includes('glass_back')
+                        clickedMesh.name.includes('windows') || clickedMesh.name.includes('windows001') || clickedMesh.name.includes('windows002') || clickedMesh.name.includes('windows003') || clickedMesh.name.includes('windows004') || clickedMesh.name.includes('windows005') || clickedMesh.name.includes('windows006') || clickedMesh.name.includes('glass_front') || clickedMesh.name.includes('glass_back') || clickedMesh.name.includes('glass_front001') || clickedMesh.name.includes('glass_back001') || clickedMesh.name.includes('glass_back_1')
                     ) {
                         // Show the range slider for glass color adjustment
                         selectedMeshRef.current = clickedMesh;
@@ -258,6 +258,7 @@ const CarViewer = () => {
                         // Initialize the slider position based on the current glass color
                         const currentBrightness = clickedMesh.material.color.r; // Assuming R, G, and B are equal
                         glassRange.value = currentBrightness;
+                        
                     } else {
                         // For other meshes, use the color picker
                         selectedMeshRef.current = clickedMesh;
@@ -277,6 +278,7 @@ const CarViewer = () => {
         };
 
         const onGlassRangeChange = (event) => {
+            const glassRange = document.getElementById('glass-range');
             if (selectedMeshRef.current) {
                 const brightness = parseFloat(event.target.value);
                 const colorValue = brightness * 255; // Convert 0-1 to 0-255
@@ -348,10 +350,11 @@ const CarViewer = () => {
 
     return (
         <div id="body">
+            {user.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[20rem] h-[20rem] top-[5rem]'/>}
             <input type="color" id="color-picker" style={{
                 position: 'absolute',
                 top: "20px",
-                right: "290px",
+                right: "390px",
                 zIndex: "999"
             }} />
             <input
@@ -360,16 +363,27 @@ const CarViewer = () => {
                 min="0"
                 max="1"
                 step="0.01"
+                onChange={(event) => setRangeValue(event.target.value)}
                 style={{
                     position: 'absolute',
                     top: "20px",
-                    right: "390px",
+                    right: "490px",
                     zIndex: "999"
                 }}
             />
-
+            <div
+                className='bg-white p-[1rem] font-bold text-black rounded-[14px]'
+                style={{
+                    position: 'absolute',
+                    top: "50px",
+                    right: "490px",
+                    zIndex: "999"
+                }}
+            >
+                {parseFloat(rangeValue).toFixed(2)}
+            </div>
             <button id="driver-view-btn" onClick={toggleDriverView}>
-                {isDriverView ? "Exit Driver's View" : "Driver's View"}
+                {isDriverView ? "الخروج من عرض السائق" : "رؤية السائق"}
             </button>
             <select
                 id="driver-view-btn2"
@@ -377,22 +391,25 @@ const CarViewer = () => {
                     const selectedCar = event.target.value;
                     setLookAtPointArr(
                         selectedCar === "sedan.glb"
-                            ? [0, 1.9, 0]
+                            ? [0, 1.5, 0]
                             : selectedCar === "4x4.glb"
                                 ? [0, 2, 0]
                                 :  selectedCar === "sportCar.glb" 
-                                ? [0, 1.9, 0]
-                                : [0, 2,0]
+                                ? [0, 1.7, 0]
+                                :  selectedCar === "middelCar.glb" 
+                                ? [0, 2,0] 
+                                : [0, 2.5, 0]                                 
                     );
                     setCar(selectedCar);
                 }}
             >
-                <option value="sedan.glb">Sedan car</option>
-                <option value="sportCar.glb">Sports car</option>
-                <option value="4x4.glb">Quad car</option>
-                <option value="middelCar.glb">Familiy car</option>
+                <option value="sedan.glb">سيارة سيدان </option>
+                <option value="sportCar.glb">سيارة رياضية </option>
+                <option value="4x4.glb">سيارة متوسطة</option>
+                <option value="middelCar.glb">سيارة عائلية</option>
+                <option value="nissan.glb"> سيارة كبيرة</option>
             </select>
-            <div id="container" ref={containerRef}></div>
+            <div className='z-0' id="container" ref={containerRef}></div>
         </div>
     );
 };

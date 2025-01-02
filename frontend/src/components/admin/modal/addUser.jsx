@@ -1,118 +1,152 @@
-import React, {  useState } from 'react'
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {  addUserRoute } from '../../../utils/apiRoutes';
+import { addUserRoute } from '../../../utils/apiRoutes';
 import { postMethode } from '../../../utils/apiFetchs';
 import Loading from '../../loading';
 
-function AddUser({ setAlert ,setUsers}) {
+function AddUser({ setAlert, setUsers }) {
     const navigate = useNavigate();
     const [inputs, setInputs] = useState({
         name: "",
         username: "",
         email: "",
         password: "",
-        subscriptionExpiryDate: ""
-    })
+        subscriptionExpiryDate: "",
+    });
+    const [image, setImage] = useState(null); // State for the uploaded image
     const [loading, setLoading] = useState(false);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setAlert({
             display: false,
         });
+
+        // Create a FormData object to handle file upload
+        const formData = new FormData();
+        Object.keys(inputs).forEach((key) => formData.append(key, inputs[key]));
+        if (image) formData.append("image", image);
+
         try {
-            const response = await postMethode(addUserRoute, inputs);
+            const response = await postMethode(addUserRoute, formData);
             setAlert({
                 display: true,
                 status: true,
-                text: response.data.msg
+                text: response.data.msg,
             });
-            setUsers((prev) => [...prev, response.data.newUser])
+            setUsers((prev) => [...prev, response.data.newUser]);
         } catch (err) {
-            if (err.response.status == 401 || err.response.status == 403) {
-                return navigate("/admin/authAdmin")
+            if (err.response?.status === 401 || err.response?.status === 403) {
+                return navigate("/admin/authAdmin");
             }
             setAlert({
                 display: true,
                 status: false,
-                text: err.response.data.msg
+                text: err.response?.data?.msg,
             });
         } finally {
             setLoading(false);
         }
-    }
+    };
+
     return (
         <dialog id="addUser" className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg mb-[0.5rem]">Add User</h3>
+                <h3 className="font-bold text-lg mb-[0.5rem]">إضافة مستخدم</h3>
                 <hr />
-                <form className='flex flex-col gap-[1rem] mt-[1rem]'>
+                <form className="flex flex-col gap-[1rem] mt-[1rem]">
                     <label className="input input-bordered flex items-center gap-2">
-                        Name
-                        <input type="text" className="grow" onChange={(event) => {
-                            setInputs((prevInputs) => {
-                                return {
+                        اسم
+                        <input
+                            type="text"
+                            className="grow"
+                            onChange={(event) => {
+                                setInputs((prevInputs) => ({
                                     ...prevInputs,
-                                    name: event.target.value
-                                }
-                            })
-                        }} />
+                                    name: event.target.value,
+                                }));
+                            }}
+                        />
                     </label>
                     <label className="input input-bordered flex items-center gap-2">
-                        Username
-                        <input type="text" className="grow" onChange={(event) => {
-                            setInputs((prevInputs) => {
-                                return {
+                        اسم المستخدم
+                        <input
+                            type="text"
+                            className="grow"
+                            onChange={(event) => {
+                                setInputs((prevInputs) => ({
                                     ...prevInputs,
-                                    username: event.target.value
-                                }
-                            })
-                        }} />
+                                    username: event.target.value,
+                                }));
+                            }}
+                        />
                     </label>
                     <label className="input input-bordered flex items-center gap-2">
-                        Email
-                        <input type="email" className="grow" onChange={(event) => {
-                            setInputs((prevInputs) => {
-                                return {
+                        بريد إلكتروني
+                        <input
+                            type="email"
+                            className="grow"
+                            onChange={(event) => {
+                                setInputs((prevInputs) => ({
                                     ...prevInputs,
-                                    email: event.target.value
-                                }
-                            })
-                        }} />
+                                    email: event.target.value,
+                                }));
+                            }}
+                        />
                     </label>
                     <label className="input input-bordered flex items-center gap-2">
-                        Password
-                        <input type="password" className="grow" onChange={(event) => {
-                            setInputs((prevInputs) => {
-                                return {
+                        كلمة المرور
+                        <input
+                            type="password"
+                            className="grow"
+                            onChange={(event) => {
+                                setInputs((prevInputs) => ({
                                     ...prevInputs,
-                                    password: event.target.value
-                                }
-                            })
-                        }} />
+                                    password: event.target.value,
+                                }));
+                            }}
+                        />
                     </label>
                     <label className="input input-bordered flex items-center gap-2">
-                    Subscription Expiry Date
-                        <input type="date" className="grow" onChange={(event) => {
-                            setInputs((prevInputs) => {
-                                return {
+                        تاريخ انتهاء الاشتراك
+                        <input
+                            type="date"
+                            className="grow"
+                            onChange={(event) => {
+                                setInputs((prevInputs) => ({
                                     ...prevInputs,
-                                    subscriptionExpiryDate: event.target.value
-                                }
-                            })
-                        }} />
+                                    subscriptionExpiryDate: event.target.value,
+                                }));
+                            }}
+                        />
+                    </label>
+                    <label className="input input-bordered flex items-center gap-2">
+                        صورة المستخدم
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="grow"
+                            onChange={(event) => setImage(event.target.files[0])}
+                        />
                     </label>
                 </form>
                 <div className="modal-action">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
-                        <button className="btn ml-[0.5rem]">Close</button>
-                        <button disabled={loading} className='btn btn-primary' onClick={handleSubmit}>{loading ? <Loading /> : 'Submit'}</button>
+                        <button className="btn ml-[0.5rem]">اغلاق</button>
+                        <button
+                            disabled={loading}
+                            className="btn btn-primary"
+                            onClick={handleSubmit}
+                        >
+                            {loading ? <Loading /> : 'ارسال'}
+                        </button>
                     </form>
                 </div>
             </div>
         </dialog>
-    )
+    );
 }
 
-export default AddUser
+export default AddUser;

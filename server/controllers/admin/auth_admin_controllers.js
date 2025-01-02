@@ -16,13 +16,13 @@ exports.authAdmin = async (req, res) => {
         // Find admin by email
         const admin = await Admin.findOne({ email });
         if (!admin) {
-            return res.status(httpStatus.UNAUTHORIZED).send({ msg: "Incorrect email or password" });
+            return res.status(httpStatus.UNAUTHORIZED).send({ msg: "البريد الإلكتروني أو كلمة المرور غير صحيحة" });
         }
 
         // Compare passwords
         const validPassword = await bcrypt.compare(password, admin.password);
         if (!validPassword) {
-            return res.status(httpStatus.UNAUTHORIZED).send({ msg: "Incorrect email or password" });
+            return res.status(httpStatus.UNAUTHORIZED).send({ msg: "البريد الإلكتروني أو كلمة المرور غير صحيحة" });
         }
 
         // Generate JWT token
@@ -31,13 +31,13 @@ exports.authAdmin = async (req, res) => {
         await admin.save();
         // Respond with token
         return res.status(httpStatus.OK).send({
-            msg: "You have successfully logged in.",
+            msg: "لقد قمت بتسجيل الدخول بنجاح.",
             token
         });
 
     } catch (err) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
-            msg: "An error occurred while processing your request."
+            msg: "حدث خطأ أثناء معالجة طلبك."
         });
     }
 };
@@ -47,12 +47,12 @@ exports.isValidateToken = async (req, res) => {
     try {
         const admin = await Admin.findById(req.admin._id).select("_id email username name")
         return res.status(200).send({
-            msg:"You have successfully logged in.",
+            msg:"لقد قمت بتسجيل الدخول بنجاح.",
             admin
         });
     } catch (err) {
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
-            msg: "An error occurred while processing your request."
+            msg: "حدث خطأ أثناء معالجة طلبك."
         });
     }
 }

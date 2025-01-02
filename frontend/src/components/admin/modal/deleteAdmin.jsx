@@ -37,13 +37,13 @@ function DeleteAdmin({ setAlert ,deleteAdmin, setAdmins, index}) {
     return (
         <dialog id="deleteAdmin" className="modal">
             <div className="modal-box">
-                <h1 className="font-bold text-lg">Delete Admin</h1>
-                <p>Are you sure you want to delete the admin?</p>
+                <h1 className="font-bold text-lg">حذف المسؤول</h1>
+                <p>هل أنت متأكد أنك تريد حذف المسؤول؟</p>
                 <div className="modal-action">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
-                        <button className="btn ml-[0.5rem]">Close</button>
-                        <button disabled={loading} className="btn btn-primary" onClick={handleSubmit}>{loading ? <Loading /> : 'Delete'}</button>
+                        <button className="btn ml-[0.5rem]">اغلاق</button>
+                        <button disabled={loading} className="btn btn-primary" onClick={handleSubmit}>{loading ? <Loading /> : 'الحذف'}</button>
                     </form>
                 </div>
             </div>

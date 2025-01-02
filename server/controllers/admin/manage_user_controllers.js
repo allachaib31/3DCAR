@@ -1,10 +1,15 @@
 const { User, validateUser } = require('../../models/user/user');
 const bcrypt = require("bcrypt");
+const { File } = require("../../models/file/file");
+const { Readable } = require('stream');
+const { bucket } = require('../../server');
 const httpStatus = require('http-status'); // Importing http-status package
+const { saveFile } = require('../../utils/saveFile');
 const SALTROUNDS = Number(process.env.SALTROUNDS);
 
 exports.addUser = async (req, res) => {
     const admin = req.admin;
+    const { file } = req;
     const {  email, username, name, password, subscriptionExpiryDate  } = req.body;
 
     try {
@@ -15,12 +20,16 @@ exports.addUser = async (req, res) => {
                 msg: error.details[0].message
             });
         }
+        let newFile
+        if (file) {
+            newFile = await saveFile(file, File, Readable, bucket);
+        }
 
         // Check if an User with the same email or username already exists
         let existingUser = await User.findOne({ $or: [{ email }, { username }] });
         if (existingUser) {
             return res.status(httpStatus.CONFLICT).json({
-                msg: "Email or username already exists"
+                msg: "البريد الإلكتروني أو اسم المستخدم موجود بالفعل"
             });
         }
 
@@ -34,6 +43,7 @@ exports.addUser = async (req, res) => {
             name,
             password: hashedPassword,
             subscriptionExpiryDate,
+            image: newFile ? newFile._id : null,
             createdBy: admin._id
         });
 

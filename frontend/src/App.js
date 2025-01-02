@@ -13,7 +13,7 @@ import CarViewClient from './screens/client/carViewClient';
 
 function App() {
   return (
-    <div id='fullScreen' data-theme={"myTheme"}>
+    <div id='fullScreen' data-theme={"myTheme"} dir="rtl" lang="ar">
       <Router>
         <Routes>
           <Route path='/' element={<AppWeb />}>

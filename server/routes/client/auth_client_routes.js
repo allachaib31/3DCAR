@@ -3,6 +3,7 @@ const { isValidateTokenClient, authClient } = require("../../controllers/client/
 const { verifyTokenClient } = require("../../middleware/client/client");
 const Router = express.Router();
 
+
 //POST METHODS
 Router.post("/api/v1.0/client/auth", authClient);
 

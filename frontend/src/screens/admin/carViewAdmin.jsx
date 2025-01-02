@@ -6,11 +6,13 @@ import { isValidateTokenRoute } from '../../utils/apiRoutes';
 function CarViewAdmin() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(false);
     useEffect(() => {
         setLoading(true)
         const validateToken = async () => {
             try {
                 const response = await getMethode(isValidateTokenRoute);
+                setUser(response.data.admin);
             } catch (error) {
                 navigate("/admin/authAdmin");
 
@@ -23,7 +25,7 @@ function CarViewAdmin() {
     }, []);
     return (
         <div>
-            <Outlet />
+            <Outlet context={{user}}/>
         </div>
     )
 }

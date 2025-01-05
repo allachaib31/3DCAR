@@ -30,23 +30,31 @@ const userSchema = new mongoose.Schema({
     },
     subscriptionExpiryDate: {
         type: Date,
-        required: true
+        required: true,
     },
     image: {
         type: mongoose.Schema.Types.ObjectId,
     },
+    ipAddresses: {
+        type: [String], // Array of IP addresses
+        default: [], // Default to an empty array
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Admin',
+        ref: "Admin",
     },
     createdAt: {
         type: Date,
-        default: Date.now(),
+        default: Date.now,
     },
 });
 
-userSchema.pre('save', async function (next) {
-    if (this.isNew) { // Check if the document is new
+userSchema.pre("save", async function (next) {
+    if (this.isNew) {
         this.id = await generateNextId("User", "U");
     }
     next();
@@ -61,6 +69,7 @@ const validateUser = (user) => {
         password: Joi.string().min(6).max(255).required(),
         subscriptionExpiryDate: Joi.date().required(),
         image: Joi.string().optional().allow(null, ""),
+        ipAddresses: Joi.array().items(Joi.string().ip({ version: ["ipv4", "ipv6"] })).optional(), // Validate IPs
         createdBy: Joi.string().optional(),
         createdAt: Joi.date().optional(),
     });
@@ -69,6 +78,6 @@ const validateUser = (user) => {
 };
 
 module.exports = {
-    User: mongoose.model('User', userSchema),
+    User: mongoose.model("User", userSchema),
     validateUser,
 };

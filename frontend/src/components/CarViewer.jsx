@@ -10,7 +10,7 @@ import { getFileRoute } from '../utils/apiRoutes';
 
 const CarViewer = () => {
     const [car, setCar] = useState("sedan.glb");
-    const [lookAtPointArr, setLookAtPointArr] = useState([0, 1.7, 0]);
+    const [lookAtPointArr, setLookAtPointArr] = useState([-0.1, 1.7, -0.2]);
     const { user } = useOutletContext();
     const containerRef = useRef(null);
     const carRef = useRef(null);
@@ -23,19 +23,9 @@ const CarViewer = () => {
     const [loading, setLoading] = useState(true);
     const [rangeValue, setRangeValue] = useState(1);
     const [isDriverView, setIsDriverView] = useState(false);
-    const [counter, setCounter] = useState(0);
 
     const driverPosition = new THREE.Vector3(0.3, 1.0, 0.3);
     const externalPosition = new THREE.Vector3(4.25, 2.5, -4.5);
-    useEffect(() => {
-        console.log(user.subscriptionExpiryDate)
-        const startDate = new Date(user.subscriptionExpiryDate);
-        const currentTime = new Date();
-        const timeDifference = Math.floor((startDate - currentTime) / 1000); // Time difference in seconds
-        if (timeDifference > 0) {
-            setCounter(timeDifference);
-        }
-    }, [user])
     // Initialize the showroom and scene
     useEffect(() => {
         const container = containerRef.current;
@@ -365,21 +355,12 @@ const CarViewer = () => {
         };
         requestAnimationFrame(animationStep);
     };
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCounter(prevCounter => prevCounter > 0 ? prevCounter - 1 : 0);
-        }, 1000);
 
-        return () => clearInterval(interval);
-    }, []);
-    const days = Math.floor(counter / (60 * 60 * 24));
-    const hours = Math.floor((counter % (60 * 60 * 24)) / (60 * 60));
-    const minutes = Math.floor((counter % (60 * 60)) / 60);
-    const seconds = counter % 60;
     return (
         <div id="body">
-            <div className="absolute top-full -translate-y-full grid grid-flow-col gap-5 text-center auto-cols-max">
-                <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
+            <div className="btn absolute top-[99%] text-black font-[900] text-2xl -translate-y-full grid grid-flow-col gap-5 text-center auto-cols-max">
+            الإشتراك صالح لغاية : {user?.subscriptionExpiryDate && new Date(user?.subscriptionExpiryDate).toISOString().split('T')[0]}
+                {/*<div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
                     <span className="countdown font-mono text-3xl">
                         <span style={{ "--value": seconds }}></span>
                     </span>
@@ -402,9 +383,9 @@ const CarViewer = () => {
                         <span style={{ "--value": days }}></span>
                     </span>
                     أيام
-                </div>
+                </div>*/}
             </div>
-            {user.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[6rem] h-[6rem] top-full right-full -translate-y-full translate-x-full' />}
+            {user?.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[6rem] h-[6rem] top-full right-full -translate-y-full translate-x-full' />}
             <div className='flex items-center gap-[1rem] absolute top-[20px] right-[20px]'>
                 <select
                     id="driver-view-btn2"
@@ -414,13 +395,13 @@ const CarViewer = () => {
                         const selectedCar = event.target.value;
                         setLookAtPointArr(
                             selectedCar === "sedan.glb"
-                                ? [0, 1.5, 0]
+                                ? [-0.1, 1.7, -0.2]
                                 : selectedCar === "4x4.glb"
                                     ? [0, 2, 0]
                                     : selectedCar === "sportCar.glb"
-                                        ? [0, 1.7, 0]
+                                        ? [0.3, 1.7, 0]
                                         : selectedCar === "middelCar.glb"
-                                            ? [0, 2, 0]
+                                            ? [0.3, 2, 0.1]
                                             : [0, 2.5, 0]
                         );
                         setCar(selectedCar);

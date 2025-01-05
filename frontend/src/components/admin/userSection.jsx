@@ -8,6 +8,7 @@ import AddUser from './modal/addUser';
 import DeleteUser from './modal/deleteUser';
 import RenewSubscription from './modal/renewSubscription';
 import UploadImageModal from './modal/uploadImageModal';
+import BlockedUser from './modal/blockedUser';
 
 function UserSection() {
   const navigate = useNavigate();
@@ -64,6 +65,8 @@ function UserSection() {
                 <th>اسم المستخدم</th>
                 <th>بريد إلكتروني</th>
                 <th>تاريخ انتهاء الاشتراك</th>
+                <th>IP</th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>
@@ -78,6 +81,17 @@ function UserSection() {
                   <td>{user.email}</td>
                   <td>{user.subscriptionExpiryDate}</td>
                   <td>
+                    <select className="select select-bordered w-fit">
+                      {
+                        user.ipAddresses && user.ipAddresses.map((ipAddress) => {
+                          return (
+                            <option>{ipAddress}</option>
+                          )
+                        })
+                      }
+                    </select>
+                  </td>
+                  <td>
                     <button className='btn btn-success' onClick={() => {
                       setUserSelected(user._id);
                       document.getElementById('RenewSubscription').showModal();
@@ -88,6 +102,13 @@ function UserSection() {
                       setUserSelected(user._id);
                       document.getElementById('uploadImageModal').showModal();
                     }}>تحميل صورة جديدة</button>
+                  </td>
+                  <td>
+                    <button className='btn btn-warning' onClick={() => {
+                      setUserSelected(user);
+                      setIndex(index);
+                      document.getElementById('blockedUserModel').showModal();
+                    }}>{user.isBlocked ? "اعادة تفعيل حساب" : "ايقاف الحساب"}</button>
                   </td>
                   <td>
                     <button className='btn btn-error' onClick={() => {
@@ -105,7 +126,8 @@ function UserSection() {
       <AddUser setAlert={setAlert} setUsers={setUsers} />
       <DeleteUser setAlert={setAlert} deleteUser={deleteUser} setUsers={setUsers} index={index} />
       <RenewSubscription users={users} setUsers={setUsers} userSelected={userSelected} />
-      <UploadImageModal userSelected={userSelected}/>
+      <UploadImageModal userSelected={userSelected} />
+      <BlockedUser userSelected={userSelected} index={index} users={users} setUsers={setUsers}/>
     </div>
   );
 }

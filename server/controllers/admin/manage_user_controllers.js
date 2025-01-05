@@ -44,6 +44,8 @@ exports.addUser = async (req, res) => {
             password: hashedPassword,
             subscriptionExpiryDate,
             image: newFile ? newFile._id : null,
+            ipAddresses: [],
+            isBlocked: false,
             createdBy: admin._id
         });
 
@@ -97,6 +99,35 @@ exports.updateImageUser = async (req, res) => {
     }
 }
 
+exports.updateUserBlocked = async (req, res) => {
+    const { userSelected } = req.body;
+
+    try {
+        // Validate input
+
+        // Find and update the user
+        const user = await User.findById(userSelected._id);
+
+        if (!user) {
+            return res.status(httpStatus.NOT_FOUND).send({
+                msg: "المستخدم غير موجود.",
+            });
+        }
+        user.isBlocked = !user.isBlocked;
+        await user.save();
+
+        return res.status(httpStatus.OK).send({
+            msg: `تم ${ user.isBlocked  ? "حظر" : "إلغاء حظر"} المستخدم بنجاح.`,
+            user,
+        });
+    } catch (err) {
+        console.error("Error updating user blocked status:", err);
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+            msg: "حدث خطأ أثناء تحديث حالة المستخدم.",
+        });
+    }
+};
+
 exports.deleteUser = async (req, res) => {
     const { id } = req.params;
 
@@ -116,7 +147,7 @@ exports.deleteUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
 
     try {
-        const users = await User.find().populate("createdBy").select("_id id email username name subscriptionExpiryDate createdBy createdAt");
+        const users = await User.find().populate("createdBy").select("_id id email username name subscriptionExpiryDate ipAddresses createdBy isBlocked createdAt");
         res.status(httpStatus.OK).send(users);
     } catch (err) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب المستخدم" });

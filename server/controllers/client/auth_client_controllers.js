@@ -9,7 +9,7 @@ exports.authClient = async (req, res) => {
 
     // Get the user's IP address
     let userIp = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(userIp)
+    console.log("hello ====>" + userIp)
     if (userIp === '::1') {
         userIp = '127.0.0.1'; // Normalize IPv6 loopback to IPv4 loopback
     }

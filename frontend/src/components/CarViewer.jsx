@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-import Stats from 'three/addons/libs/stats.module.js';
+//import Stats from 'three/addons/libs/stats.module.js';
 import { useOutletContext } from 'react-router-dom';
 import { getFileRoute } from '../utils/apiRoutes';
 
@@ -18,7 +18,7 @@ const CarViewer = () => {
     const cameraRef = useRef(null);
     const controlsRef = useRef(null);
     const rendererRef = useRef(null);
-    const statsRef = useRef(null);
+    //const statsRef = useRef(null);
     const selectedMeshRef = useRef(null);
     const [loading, setLoading] = useState(true);
     const [rangeValue, setRangeValue] = useState(1);
@@ -73,9 +73,9 @@ const CarViewer = () => {
         scene.add(grid);
 
         // Setup stats
-        const stats = new Stats();
+        /*const stats = new Stats();
         container.appendChild(stats.dom);
-        statsRef.current = stats;
+        statsRef.current = stats;*/
 
         // Load the showroom
         const loader = new GLTFLoader();
@@ -108,7 +108,7 @@ const CarViewer = () => {
 
         const animate = () => {
             controls.update();
-            stats.update();
+            //stats.update();
 
             // Clamp camera position to showroom bounds
             //clampPosition(camera.position, showroomBounds);

@@ -29,7 +29,13 @@ conn.once('open', () => {
         statusCode: 429,
         headers: true
     });
-
+    app.set('trust proxy', true);
+    app.use((req, res, next) => {
+        const clientIP = req.headers['x-forwarded-for'] || req.ip;
+        console.log(`Client IP: ${clientIP}`);
+        next();
+    });
+    
     app
         .use(express.json({ limit: '50mb' }))
         .use(express.urlencoded({ limit: '50mb', extended: true }))

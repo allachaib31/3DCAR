@@ -5,10 +5,10 @@ const { User } = require("../../models/user/user");
 const JWTKEY = process.env.JWTKEY;
 
 exports.authClient = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, ipAddress } = req.body;
 
     // Get the user's IP address
-    let userIp = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    let userIp = req.ip || req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] ||req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress;
     console.log("hello ====>" + userIp)
     if (userIp === '::1') {
         userIp = '127.0.0.1'; // Normalize IPv6 loopback to IPv4 loopback
@@ -34,8 +34,8 @@ exports.authClient = async (req, res) => {
             return res.status(httpStatus.FORBIDDEN).send({ msg: "تم ايقاف حسابك يرجى التواصل مع صاحب الموقع." });
         }
         // Save the IP address if it's new
-        if (!user.ipAddresses.includes(userIp)) {
-            user.ipAddresses.push(userIp);
+        if (!user.ipAddresses.includes(ipAddress)) {
+            user.ipAddresses.push(ipAddress);
         }
         user.lastLogin = new Date(); // Update last login timestamp
         await user.save();

@@ -36,6 +36,24 @@ function LoginClient() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState({ display: false });
+    const [ipAddress, setIpAddress] = useState("");
+
+    const fetchIpAddress = useCallback(async () => {
+        try {
+            const response = await fetch("https://api.ipify.org/?format=json");
+            if (!response.ok) {
+                throw new Error("Failed to fetch IP address");
+            }
+            const data = await response.json();
+            setIpAddress(data.ip);
+        } catch (error) {
+            console.error("Failed to fetch IP address", error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchIpAddress();
+    }, [fetchIpAddress]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,7 +61,7 @@ function LoginClient() {
         setAlert({ display: false });
 
         try {
-            const response = await postMethode(authClientRoute, { email, password });
+            const response = await postMethode(authClientRoute, { email, password, ipAddress });
             setAlert({ display: true, status: true, text: response.data.msg });
             navigate("/");
         } catch (err) {

@@ -182,6 +182,8 @@ const CarViewer = () => {
                     "body_2",
                     "body_3",
                     "windows",
+                    "windows_001",
+                    "windows_002",
                     "windows001",
                     "windows002",
                     "windows003",
@@ -191,6 +193,8 @@ const CarViewer = () => {
                     "guide",
                     "guide001",
                     "internal",
+                    "internal_1",
+                    "internal_2",
                     "internal001",
                     "internal two",
                     "internal_two",
@@ -213,11 +217,11 @@ const CarViewer = () => {
                     transparent: true,
                 });
                 glassMaterial.side = THREE.DoubleSide;
-
+                //console.log(child.name)
                 if (child.isMesh) {
-                    // console.log(child.name)
+                     console.log(child.name)
                     if (
-                        child.name.includes('windows') || child.name.includes('windows001') || child.name.includes('windows002') || child.name.includes('windows003') || child.name.includes('windows004') || child.name.includes('windows005') || child.name.includes('windows006') || child.name.includes('glass_front') || child.name.includes('glass_back') || child.name.includes('glass_front001') || child.name.includes('glass_back001') || child.name.includes('glass_back_1')
+                        child.name.includes('windows') || child.name.includes('windows001') || child.name.includes('windows002') || child.name.includes('windows_001') || child.name.includes('windows_002') || child.name.includes('windows003') || child.name.includes('windows004') || child.name.includes('windows005') || child.name.includes('windows006') || child.name.includes('glass_front') || child.name.includes('glass_back') || child.name.includes('glass_front001') || child.name.includes('glass_back001') || child.name.includes('glass_back_1')
                     ) {
                         child.material = glassMaterial;
                         child.renderOrder = 1;
@@ -253,7 +257,7 @@ const CarViewer = () => {
                 const clickedMesh = intersects[0].object;
                 if (clickedMesh.userData.clickable) {
                     if (
-                        clickedMesh.name.includes('windows') || clickedMesh.name.includes('windows001') || clickedMesh.name.includes('windows002') || clickedMesh.name.includes('windows003') || clickedMesh.name.includes('windows004') || clickedMesh.name.includes('windows005') || clickedMesh.name.includes('windows006') || clickedMesh.name.includes('glass_front') || clickedMesh.name.includes('glass_back') || clickedMesh.name.includes('glass_front001') || clickedMesh.name.includes('glass_back001') || clickedMesh.name.includes('glass_back_1')
+                        clickedMesh.name.includes('windows') || clickedMesh.name.includes('windows001') || clickedMesh.name.includes('windows002') || clickedMesh.name.includes('windows_001') || clickedMesh.name.includes('windows_002') || clickedMesh.name.includes('windows003') || clickedMesh.name.includes('windows004') || clickedMesh.name.includes('windows005') || clickedMesh.name.includes('windows006') || clickedMesh.name.includes('glass_front') || clickedMesh.name.includes('glass_back') || clickedMesh.name.includes('glass_front001') || clickedMesh.name.includes('glass_back001') || clickedMesh.name.includes('glass_back_1')
                     ) {
                         // Show the range slider for glass color adjustment
                         selectedMeshRef.current = clickedMesh;
@@ -360,30 +364,6 @@ const CarViewer = () => {
         <div id="body">
             <div className="btn absolute top-[99%] text-black font-[900] text-2xl -translate-y-full grid grid-flow-col gap-5 text-center auto-cols-max">
             الإشتراك صالح لغاية : {user?.subscriptionExpiryDate && new Date(user?.subscriptionExpiryDate).toISOString().split('T')[0]}
-                {/*<div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-                    <span className="countdown font-mono text-3xl">
-                        <span style={{ "--value": seconds }}></span>
-                    </span>
-                    ثانية
-                </div>
-                <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-                    <span className="countdown font-mono text-3xl">
-                        <span style={{ "--value": minutes }}></span>
-                    </span>
-                    دقيقة
-                </div>
-                <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-                    <span className="countdown font-mono text-3xl">
-                        <span style={{ "--value": hours }}></span>
-                    </span>
-                    ساعات
-                </div>
-                <div className="flex flex-col p-2 bg-neutral rounded-box text-neutral-content">
-                    <span className="countdown font-mono text-3xl">
-                        <span style={{ "--value": days }}></span>
-                    </span>
-                    أيام
-                </div>*/}
             </div>
             {user?.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[6rem] h-[6rem] top-full right-full -translate-y-full translate-x-full' />}
             <div className='flex items-center gap-[1rem] absolute top-[20px] right-[20px]'>
@@ -402,7 +382,7 @@ const CarViewer = () => {
                                         ? [0.3, 1.7, 0]
                                         : selectedCar === "middelCar.glb"
                                             ? [0.3, 2, 0.1]
-                                            : [0, 2.5, 0]
+                                            : [0, 2, 0.1]
                         );
                         setCar(selectedCar);
                     }}

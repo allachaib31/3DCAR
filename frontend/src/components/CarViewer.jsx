@@ -10,6 +10,7 @@ import { getFileRoute } from '../utils/apiRoutes';
 
 const CarViewer = () => {
     const [car, setCar] = useState("sedan.glb");
+    const carCache = useRef({});
     const [lookAtPointArr, setLookAtPointArr] = useState([-0.1, 1.7, -0.2]);
     const { user } = useOutletContext();
     const containerRef = useRef(null);
@@ -26,6 +27,27 @@ const CarViewer = () => {
 
     const driverPosition = new THREE.Vector3(0.3, 1.0, 0.3);
     const externalPosition = new THREE.Vector3(4.25, 2.5, -4.5);
+
+
+    const preloadCars = async () => {
+        const carFiles = ["sedan.glb", "sportCar.glb", "4x4.glb", "middelCar.glb", "nissan.glb"];
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath('/jsm/libs/draco/gltf/');
+        const loader = new GLTFLoader();
+        loader.setDRACOLoader(dracoLoader);
+
+        const promises = carFiles.map(file =>
+            new Promise((resolve, reject) => {
+                loader.load(`/models/gltf/${file}`, gltf => {
+                    carCache.current[file] = gltf.scene;
+                    resolve();
+                }, undefined, reject);
+            })
+        );
+
+        await Promise.all(promises);
+    };
+
     // Initialize the showroom and scene
     useEffect(() => {
         const container = containerRef.current;
@@ -93,30 +115,21 @@ const CarViewer = () => {
             renderer.setSize(window.innerWidth, window.innerHeight);
         };
         window.addEventListener('resize', onResize);
-        const showroomBounds = {
-            minX: -15, maxX: 7,  // Horizontal bounds
-            minY: 0.5, maxY: 14, // Vertical bounds (roof at y = 4)
-            minZ: -5, maxZ: 5   // Depth bounds
-        };
-
-
-        const clampPosition = (position, bounds) => {
-            position.x = THREE.MathUtils.clamp(position.x, bounds.minX, bounds.maxX);
-            position.y = THREE.MathUtils.clamp(position.y, bounds.minY, bounds.maxY);
-            position.z = THREE.MathUtils.clamp(position.z, bounds.minZ, bounds.maxZ);
-        };
 
         const animate = () => {
             controls.update();
-            //stats.update();
-
-            // Clamp camera position to showroom bounds
-            //clampPosition(camera.position, showroomBounds);
-
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
         };
         animate();
+
+        const preloadAndRender = async () => {
+            await preloadCars();
+            setLoading(false);
+            setCar("sedan.glb"); // Default car after preloading
+        };
+
+        preloadAndRender();
 
         return () => {
             // Cleanup resources
@@ -147,7 +160,7 @@ const CarViewer = () => {
         }
 
         // Remove previous car if it exists
-        if (carRef.current) {
+        /*if (carRef.current) {
             scene.remove(carRef.current);
             carRef.current.traverse((child) => {
                 if (child.isMesh) {
@@ -159,10 +172,80 @@ const CarViewer = () => {
                     }
                 }
             });
+        }*/
+        Object.values(carCache.current).forEach(cachedCar => {
+            scene.remove(cachedCar);
+        });
+        const selectedCar = carCache.current[car];
+        if (selectedCar) {
+            selectedCar.traverse((child) => {
+                const clickableParts = [
+                    "seats",
+                    "seats001",
+                    "body",
+                    "body001",
+                    "body002",
+                    "body003",
+                    "body_1",
+                    "body_2",
+                    "body_3",
+                    "windows",
+                    "windows_001",
+                    "windows_002",
+                    "windows001",
+                    "windows002",
+                    "windows003",
+                    "windows004",
+                    "windows005",
+                    "windows006",
+                    "guide",
+                    "guide001",
+                    "internal",
+                    "internal_1",
+                    "internal_2",
+                    "internal001",
+                    "internal two",
+                    "internal_two",
+                    "glass_front",
+                    "glass_front001",
+                    "glass_back",
+                    "glass_back001",
+                    "glass_back_1",
+                ];
+                const glassMaterial = new THREE.MeshPhysicalMaterial({
+                    color: 0xffffff, // Clear glass
+                    metalness: 0.0, // Minimal metallic effect
+                    roughness: 0.05, // Smooth surface with slight imperfections
+                    transmission: 0.95, // High transparency
+                    clearcoat: 1.0, // Strong clear coat for enhanced reflections
+                    clearcoatRoughness: 0.0, // Perfectly polished clear coat
+                    ior: 1.5, // Index of refraction for glass
+                    envMapIntensity: 1.0, // Enhance environment map reflections
+                    depthWrite: true, // Ensure depth sorting works correctly
+                    transparent: true,
+                });
+                glassMaterial.side = THREE.DoubleSide;
+                //console.log(child.name)
+                if (child.isMesh) {
+                    console.log(child.name)
+                    if (
+                        child.name.includes('windows') || child.name.includes('windows001') || child.name.includes('windows002') || child.name.includes('windows_001') || child.name.includes('windows_002') || child.name.includes('windows003') || child.name.includes('windows004') || child.name.includes('windows005') || child.name.includes('windows006') || child.name.includes('glass_front') || child.name.includes('glass_back') || child.name.includes('glass_front001') || child.name.includes('glass_back001') || child.name.includes('glass_back_1')
+                    ) {
+                        child.material = glassMaterial;
+                        child.renderOrder = 1;
+                    }
+                    if (clickableParts.includes(child.name)) {
+                        child.userData.clickable = true; // Mark as clickable
+                    }
+                }
+            });
+
+            scene.add(selectedCar);
+            setLoading(false);
         }
 
         // Load the new car
-        const dracoLoader = new DRACOLoader();
+        /*const dracoLoader = new DRACOLoader();
         dracoLoader.setDecoderPath('/jsm/libs/draco/gltf/');
         const loader = new GLTFLoader();
         loader.setDRACOLoader(dracoLoader);
@@ -219,7 +302,7 @@ const CarViewer = () => {
                 glassMaterial.side = THREE.DoubleSide;
                 //console.log(child.name)
                 if (child.isMesh) {
-                     console.log(child.name)
+                    console.log(child.name)
                     if (
                         child.name.includes('windows') || child.name.includes('windows001') || child.name.includes('windows002') || child.name.includes('windows_001') || child.name.includes('windows_002') || child.name.includes('windows003') || child.name.includes('windows004') || child.name.includes('windows005') || child.name.includes('windows006') || child.name.includes('glass_front') || child.name.includes('glass_back') || child.name.includes('glass_front001') || child.name.includes('glass_back001') || child.name.includes('glass_back_1')
                     ) {
@@ -234,7 +317,7 @@ const CarViewer = () => {
 
             scene.add(carModel);
             setLoading(false);
-        });
+        });*/
     }, [car]);
 
     // Handle color picker and click events
@@ -363,7 +446,7 @@ const CarViewer = () => {
     return (
         <div id="body">
             <div className="btn absolute top-[99%] text-black font-[900] text-2xl -translate-y-full grid grid-flow-col gap-5 text-center auto-cols-max">
-            الإشتراك صالح لغاية : {user?.subscriptionExpiryDate && new Date(user?.subscriptionExpiryDate).toISOString().split('T')[0]}
+                الإشتراك صالح لغاية : {user?.subscriptionExpiryDate && new Date(user?.subscriptionExpiryDate).toISOString().split('T')[0]}
             </div>
             {user?.image && <img src={`${getFileRoute}${user.image}`} alt="" className='absolute w-[6rem] h-[6rem] top-full right-full -translate-y-full translate-x-full' />}
             <div className='flex items-center gap-[1rem] absolute top-[20px] right-[20px]'>

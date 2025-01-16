@@ -9,7 +9,7 @@ import { useOutletContext } from 'react-router-dom';
 import { getFileRoute } from '../utils/apiRoutes';
 
 const CarViewer = () => {
-    const [car, setCar] = useState("sedan.glb");
+    const [car, setCar] = useState("");
     const carCache = useRef({});
     const [lookAtPointArr, setLookAtPointArr] = useState([-0.1, 1.7, -0.2]);
     const { user } = useOutletContext();
@@ -143,7 +143,7 @@ const CarViewer = () => {
         const scene = sceneRef.current;
         const camera = cameraRef.current;
         const controls = controlsRef.current;
-        setLoading(true);
+        //setLoading(true);
 
         // Reset driver view if active
         if (isDriverView) {
@@ -241,7 +241,7 @@ const CarViewer = () => {
             });
 
             scene.add(selectedCar);
-            setLoading(false);
+            //setLoading(false);
         }
 
         // Load the new car
@@ -470,6 +470,7 @@ const CarViewer = () => {
                         setCar(selectedCar);
                     }}
                 >
+                    {/*<option selected disabled>اختر سيارة</option>*/}
                     <option className='text-black' value="sedan.glb">سيارة سيدان </option>
                     <option className='text-black' value="sportCar.glb">سيارة رياضية </option>
                     <option className='text-black' value="4x4.glb">سيارة متوسطة</option>
@@ -496,7 +497,9 @@ const CarViewer = () => {
                     {parseFloat(rangeValue).toFixed(2)}
                 </div>
             </div>
+            {loading ? <div className='z-[999] absolute right-1/2 top-1/2'><span className="loading loading-bars loading-lg bg-primary"></span></div> : ""}
             <div className='z-0' id="container" ref={containerRef}></div>
+            
         </div >
     );
 };
